@@ -15,10 +15,9 @@ pub fn create_vm() -> LuaResult<Lua> {
     let globals = lua.globals();
     let package: LuaTable = globals.get("package")?;
     let current_path: String = package.get("path")?;
-    let lumina_path = format!("{}/app/lumina/?.lua;{}/app/?.lua;{}",
-        std::env::current_dir().unwrap_or_default().display(),
-        std::env::current_dir().unwrap_or_default().display(),
-        current_path);
+    let cwd = std::env::current_dir().unwrap_or_default().display().to_string();
+    let lumina_path = format!("{}/app/lumina/?.lua;{}/app/?/init.lua;{}/app/?.lua;{}",
+        cwd, cwd, cwd, current_path);
     package.set("path", lumina_path)?;
 
     let device_bridge = Arc::new(Mutex::new(DeviceBridge::new()));

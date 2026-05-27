@@ -1058,18 +1058,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "lumina-cli"
-version = "0.1.0"
-dependencies = [
- "clap",
- "lumina-bridge",
- "lumina-core",
- "lumina-platforms",
- "mlua",
- "tokio",
-]
-
-[[package]]
 name = "lumina-core"
 version = "0.1.0"
 dependencies = [
@@ -1083,6 +1071,18 @@ dependencies = [
  "tokio",
  "wgpu",
  "winit",
+]
+
+[[package]]
+name = "lumina-fw"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "lumina-bridge",
+ "lumina-core",
+ "lumina-platforms",
+ "mlua",
+ "tokio",
 ]
 
 [[package]]

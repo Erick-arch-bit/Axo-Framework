@@ -22,18 +22,18 @@ struct VertexOutput {
     @builtin(position) position: vec4<f32>,
 };
 
+fn corner(idx: u32) -> vec2<f32> {
+    if idx == 0u { return vec2<f32>(0.0, 0.0); }
+    if idx == 1u { return vec2<f32>(1.0, 0.0); }
+    if idx == 2u { return vec2<f32>(0.0, 1.0); }
+    if idx == 3u { return vec2<f32>(0.0, 1.0); }
+    if idx == 4u { return vec2<f32>(1.0, 0.0); }
+    return vec2<f32>(1.0, 1.0);
+}
+
 @vertex
 fn vs_main(@builtin(vertex_index) in_vertex_index: u32) -> VertexOutput {
-    let corners = array<vec2<f32>, 6>(
-        vec2<f32>(0.0, 0.0),
-        vec2<f32>(1.0, 0.0),
-        vec2<f32>(0.0, 1.0),
-        vec2<f32>(0.0, 1.0),
-        vec2<f32>(1.0, 0.0),
-        vec2<f32>(1.0, 1.0),
-    );
-
-    let uv = corners[in_vertex_index];
+    let uv = corner(in_vertex_index);
     let world_x = rect.x + uv.x * rect.w;
     let world_y = rect.y + uv.y * rect.h;
     let clip_x = (world_x / globals.screen_width) * 2.0 - 1.0;
