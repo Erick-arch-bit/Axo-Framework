@@ -26,7 +26,7 @@ jobs:
         run: cargo install cargo-audit --locked
 
       - name: Check advisories
-        run: cargo audit --deny warnings
+        run: cargo audit --deny warnings --config audit.toml
 
   lint:
     name: Lint & format
