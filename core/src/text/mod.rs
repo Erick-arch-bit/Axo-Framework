@@ -14,7 +14,7 @@ pub struct GlyphQuad {
 
 impl TextRenderer {
     pub fn new() -> Self {
-        let font_data: &[u8] = include_bytes!("../../../assets/LiberationSans-Regular.ttf");
+        let font_data: &[u8] = include_bytes!("../../assets/LiberationSans-Regular.ttf");
         let font = FontArc::try_from_slice(font_data)
             .expect("Failed to load LiberationSans font");
         Self { font }
