@@ -2,10 +2,17 @@
 name = "lumina-bridge"
 version.workspace = true
 edition.workspace = true
+license.workspace = true
+description = "Lua↔Rust bridge for Lumina Framework: serializes Lua UI trees to Rust nodes, registers device APIs and event callbacks"
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+keywords = ["ui", "gui", "lua", "ffi", "mlua"]
+categories = ["gui", "game-engines", "wasm"]
 
 [dependencies]
 mlua.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 taffy.workspace = true
-lumina-core = { path = "../core" }
+lumina-core = { path = "../core", version = "0.1" }
