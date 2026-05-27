@@ -14,7 +14,7 @@ license = "MIT"
 description = "Lumina Framework"
 repository = "https://github.com/Erick-arch-bit/Lumina-Framework"
 homepage = "https://github.com/Erick-arch-bit/Lumina-Framework"
-readme = "../README.md"
+readme = "README.md"
 
 [workspace.dependencies]
 mlua = { version = "0.10", features = ["lua54", "send"] }

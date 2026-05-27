@@ -6,7 +6,7 @@ license.workspace = true
 description = "CLI tool for Lumina Framework: init, dev (hot-reload), build, and release commands"
 repository.workspace = true
 homepage.workspace = true
-readme.workspace = true
+readme = "../README.md"
 keywords = ["ui", "gui", "cli", "hot-reload", "lua"]
 categories = ["gui", "command-line-utilities", "wasm"]
 

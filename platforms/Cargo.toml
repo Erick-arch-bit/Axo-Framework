@@ -6,7 +6,7 @@ license.workspace = true
 description = "Platform backends for Lumina Framework: desktop (winit), Android (JNI), iOS (UIKit), Web (WASM)"
 repository.workspace = true
 homepage.workspace = true
-readme.workspace = true
+readme = "../README.md"
 keywords = ["ui", "gui", "cross-platform", "android", "wasm"]
 categories = ["gui", "game-engines", "wasm"]
 

@@ -6,7 +6,7 @@ license.workspace = true
 description = "Lua↔Rust bridge for Lumina Framework: serializes Lua UI trees to Rust nodes, registers device APIs and event callbacks"
 repository.workspace = true
 homepage.workspace = true
-readme.workspace = true
+readme = "../README.md"
 keywords = ["ui", "gui", "lua", "ffi", "mlua"]
 categories = ["gui", "game-engines", "wasm"]
 
