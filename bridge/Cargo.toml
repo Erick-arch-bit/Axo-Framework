@@ -1,0 +1,11 @@
+[package]
+name = "lumina-bridge"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+mlua.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+taffy.workspace = true
+lumina-core = { path = "../core" }

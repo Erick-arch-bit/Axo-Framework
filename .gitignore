@@ -1,0 +1,11 @@
+target/
+node_modules/
+*.o
+*.so
+*.dylib
+*.dll
+*.wasm
+*.log
+.env
+.DS_Store
+platforms/web/pkg/*

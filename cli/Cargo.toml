@@ -1,0 +1,12 @@
+[package]
+name = "lumina-cli"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+lumina-core = { path = "../core" }
+lumina-bridge = { path = "../bridge" }
+lumina-platforms = { path = "../platforms" }
+tokio.workspace = true
+clap = { version = "4", features = ["derive"] }
+mlua.workspace = true
