@@ -10,10 +10,6 @@ readme = "../README.md"
 keywords = ["ui", "gui", "cli", "hot-reload", "lua"]
 categories = ["gui", "command-line-utilities", "wasm"]
 
-[[bin]]
-name = "axo"
-path = "src/main.rs"
-
 [dependencies]
 axo-core = { path = "../core", version = "0.1" }
 axo-bridge = { path = "../bridge", version = "0.1" }

@@ -207,13 +207,13 @@ Proyecto generado con Axo Framework.
 ## Desarrollo
 
 ```bash
-axo dev
+axo-cli dev
 ```
 
 ## Build
 
 ```bash
-axo build
+axo-cli build
 ```
 "#;
 
@@ -246,5 +246,5 @@ pub fn run(args: InitArgs) {
     println!("Project '{}' created!", args.name);
     println!();
     println!("  cd {}", args.name);
-    println!("  axo dev");
+    println!("  axo-cli dev");
 }

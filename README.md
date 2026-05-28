@@ -18,21 +18,18 @@ Axo es un framework UI multiplataforma con motor **Rust** (wgpu) y capa de scrip
 ## Quickstart
 
 ```bash
-# Instalar desde crates.io
+# Instalar
 cargo install axo-cli
 
-# O desde el repositorio
-# cargo install --path cli
-
 # Crear proyecto
-axo init my-app
+axo-cli init my-app
 cd my-app
 
 # Desarrollo con hot reload
-axo dev
+axo-cli dev
 
 # Build producción
-axo build --mode release
+axo-cli build --mode release
 ```
 
 ## Conceptos
@@ -126,11 +123,11 @@ Device.writeFile("data.txt", "contenido")
 ## CLI
 
 ```bash
-axo init <nombre>    # Scaffold proyecto
-axo dev              # Desarrollo con hot reload
-axo build            # Build debug
-axo build --mode release  # Build producción
-axo release          # Build + bundle
+axo-cli init <nombre>    # Scaffold proyecto
+axo-cli dev              # Desarrollo con hot reload
+axo-cli build            # Build debug
+axo-cli build --mode release  # Build producción
+axo-cli release          # Build + bundle
 ```
 
 ## Estructura del proyecto
