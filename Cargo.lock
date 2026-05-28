@@ -166,6 +166,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "axo-cli"
+version = "0.1.1"
+dependencies = [
+ "axo-bridge",
+ "axo-core",
+ "axo-platforms",
+ "clap",
+ "mlua",
+ "tokio",
+]
+
+[[package]]
 name = "axo-core"
 version = "0.1.1"
 dependencies = [
@@ -179,18 +191,6 @@ dependencies = [
  "tokio",
  "wgpu",
  "winit",
-]
-
-[[package]]
-name = "axo-fw"
-version = "0.1.1"
-dependencies = [
- "axo-bridge",
- "axo-core",
- "axo-platforms",
- "clap",
- "mlua",
- "tokio",
 ]
 
 [[package]]
