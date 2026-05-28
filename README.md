@@ -18,8 +18,11 @@ Axo es un framework UI multiplataforma con motor **Rust** (wgpu) y capa de scrip
 ## Quickstart
 
 ```bash
-# Instalar
-cargo install --path cli
+# Instalar desde crates.io
+cargo install axo-cli
+
+# O desde el repositorio
+# cargo install --path cli
 
 # Crear proyecto
 axo init my-app
@@ -136,7 +139,7 @@ axo release          # Build + bundle
 my-app/
 ├── app/
 │   ├── app.lua              # Entry point (debe retornar App())
-│       └── axo/init.lua      # Std library (View, Text, Button, etc.)
+│   │   └── axo/init.lua      # Std library (View, Text, Button, etc.)
 └── README.md
 ```
 
@@ -158,4 +161,3 @@ my-app/
 ## Licencia
 
 MIT
-# Axo-Framework
