@@ -8,6 +8,8 @@ pub struct InitArgs {
     pub name: String,
 }
 
+const INIT_LUA: &str = include_str!("../../app/axo/init.lua");
+
 const APP_LUA: &str = r##"local UI = require("axo")
 
 function onButtonClick()
@@ -91,6 +93,7 @@ pub fn run(args: InitArgs) {
     fs::create_dir_all(project_dir.join("app")).unwrap();
 
     create_file(project_dir, "app/app.lua", APP_LUA);
+    create_file(project_dir, "app/axo/init.lua", INIT_LUA);
     create_file(project_dir, "README.md", README);
 
     println!();
