@@ -4,11 +4,11 @@ use std::path::Path;
 
 #[derive(Args)]
 pub struct InitArgs {
-    #[arg(default_value = "my-lumina-app")]
+    #[arg(default_value = "my-axo-app")]
     pub name: String,
 }
 
-const APP_LUA: &str = r##"local UI = require("lumina")
+const APP_LUA: &str = r##"local UI = require("axo")
 
 function onButtonClick()
     log("Boton clickeado!")
@@ -27,7 +27,7 @@ function App()
             alignItems = "center",
         },
         children = {
-            UI.Text("Hola desde Lumina!", {
+            UI.Text("Hola desde Axo!", {
                 fontSize = 28,
                 color = "#ffffff",
             }),
@@ -52,20 +52,20 @@ end
 return App
 "##;
 
-const README: &str = r#"# Lumina App
+const README: &str = r#"# Axo App
 
-Proyecto generado con Lumina Framework.
+Proyecto generado con Axo Framework.
 
 ## Desarrollo
 
 ```bash
-lumina dev
+axo dev
 ```
 
 ## Build
 
 ```bash
-lumina build
+axo build
 ```
 "#;
 
@@ -86,7 +86,7 @@ pub fn run(args: InitArgs) {
         return;
     }
 
-    println!("Creating Lumina project: {}", args.name);
+    println!("Creating Axo project: {}", args.name);
 
     fs::create_dir_all(project_dir.join("app")).unwrap();
 
@@ -97,5 +97,5 @@ pub fn run(args: InitArgs) {
     println!("Project '{}' created!", args.name);
     println!();
     println!("  cd {}", args.name);
-    println!("  lumina dev");
+    println!("  axo dev");
 }

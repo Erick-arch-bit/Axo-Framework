@@ -1,9 +1,9 @@
 [package]
-name = "lumina-fw"
+name = "axo-fw"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "CLI tool for Lumina Framework: init, dev (hot-reload), build, and release commands"
+description = "CLI tool for Axo Framework: init, dev (hot-reload), build, and release commands"
 repository.workspace = true
 homepage.workspace = true
 readme = "../README.md"
@@ -11,9 +11,9 @@ keywords = ["ui", "gui", "cli", "hot-reload", "lua"]
 categories = ["gui", "command-line-utilities", "wasm"]
 
 [dependencies]
-lumina-core = { path = "../core", version = "0.1" }
-lumina-bridge = { path = "../bridge", version = "0.1" }
-lumina-platforms = { path = "../platforms", version = "0.1" }
+axo-core = { path = "../core", version = "0.1" }
+axo-bridge = { path = "../bridge", version = "0.1" }
+axo-platforms = { path = "../platforms", version = "0.1" }
 tokio.workspace = true
 clap = { version = "4", features = ["derive"] }
 mlua.workspace = true

@@ -1,4 +1,4 @@
-# Lumina Framework — Arquitectura
+# Axo Framework — Arquitectura
 
 ## Diagrama C4 Level 2 (Containers)
 
@@ -6,7 +6,7 @@
 graph TD
     subgraph "App Layer (Lua)"
         LU["app/*.lua\n(User Code)"]
-        LF["app/lumina/*.lua\n(Std Library)"]
+        LF["app/axo/*.lua\n(Std Library)"]
     end
 
     subgraph "Bridge Layer (Rust + mlua)"
@@ -50,7 +50,7 @@ graph TD
 ### App Layer (Lua)
 Código del desarrollador. UI declarativa, estado, lógica de negocio.
 - `app/*.lua` — entrada de la aplicación
-- `app/lumina/*.lua` — librería estándar de componentes (View, Text, Button, etc.)
+- `app/axo/*.lua` — librería estándar de componentes (View, Text, Button, etc.)
 
 ### Bridge Layer (Rust)
 Comunicación Lua ↔ Rust via mlua.

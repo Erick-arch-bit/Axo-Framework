@@ -12,6 +12,6 @@ impl Platform for DesktopPlatform {
     }
 
     fn run(&self) {
-        lumina_core::window::run_with_rects(Vec::new());
+        axo_core::window::run_with_rects(Vec::new());
     }
 }

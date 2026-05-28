@@ -1,4 +1,4 @@
-local UI = require("lumina")
+local UI = require("axo")
 
 function handleIncrement()
     log("Increment clicked!")
@@ -23,7 +23,7 @@ function App()
             alignItems = "center",
         },
         children = {
-            UI.Text("Lumina Framework", {
+            UI.Text("Axo Framework", {
                 fontSize = 28,
                 color = "#ffffff",
             }),

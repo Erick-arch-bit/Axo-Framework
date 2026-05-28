@@ -26,7 +26,7 @@ pub fn run(args: BuildArgs) {
         cmd.arg(target);
     }
 
-    println!("[CLI] Building Lumina ({})...", args.mode);
+    println!("[CLI] Building Axo ({})...", args.mode);
     println!("[CLI] Running: {:?}", cmd);
 
     let status = cmd.status().expect("Failed to run cargo build");

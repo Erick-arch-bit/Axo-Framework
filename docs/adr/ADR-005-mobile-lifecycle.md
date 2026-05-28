@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-05-26
-- **Decision-makers:** Lumina Core Team
+- **Decision-makers:** Axo Core Team
 
 ## Context
 Android (onResume/onPause/onDestroy) e iOS (applicationState) tienen ciclos de vida que el core Rust debe manejar para no perder estado.

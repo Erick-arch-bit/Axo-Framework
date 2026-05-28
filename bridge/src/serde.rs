@@ -225,9 +225,9 @@ pub fn table_to_ui_node(table: &LuaTable, lua: &Lua) -> LuaResult<UiNode> {
             }
             LuaValue::Function(f) => {
                 // Store function reference by name and store the name
-                let name = format!("__lumina_cb_{}", f.to_pointer() as u64);
+                let name = format!("__axo_cb_{}", f.to_pointer() as u64);
                 let globals = lua.globals();
-                if let Ok(callbacks) = globals.get::<LuaTable>("_LUMINA_CALLBACKS") {
+                if let Ok(callbacks) = globals.get::<LuaTable>("_AXO_CALLBACKS") {
                     callbacks.set(name.as_str(), f)?;
                 }
                 style.on_click_id = name;

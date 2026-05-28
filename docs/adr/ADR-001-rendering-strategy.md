@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-05-26
-- **Decision-makers:** Lumina Core Team
+- **Decision-makers:** Axo Core Team
 
 ## Context
 El framework necesita renderizar interfaces en múltiples plataformas sin usar vistas nativas. Las opciones son wgpu (GPU directa) o skia-rs (skia-safe como backend).

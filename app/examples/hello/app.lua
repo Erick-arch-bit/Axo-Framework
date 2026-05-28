@@ -1,7 +1,7 @@
-local UI = require("lumina")
+local UI = require("axo")
 
 function onHelloClick()
-    print("Hola desde Lumina Framework!")
+    print("Hola desde Axo Framework!")
 end
 
 function App()
@@ -14,7 +14,7 @@ function App()
             alignItems = "center",
         },
         children = {
-            UI.Text("Hola desde Lumina Framework", {
+            UI.Text("Hola desde Axo Framework", {
                 fontSize = 24,
                 color = "#ffffff",
             }),

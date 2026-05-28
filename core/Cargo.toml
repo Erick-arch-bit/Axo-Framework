@@ -1,9 +1,9 @@
 [package]
-name = "lumina-core"
+name = "axo-core"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "Core engine for Lumina Framework: wgpu rendering, Taffy layout, text (ab_glyph), window management, permissions, device APIs"
+description = "Core engine for Axo Framework: wgpu rendering, Taffy layout, text (ab_glyph), window management, permissions, device APIs"
 repository.workspace = true
 homepage.workspace = true
 readme = "../README.md"

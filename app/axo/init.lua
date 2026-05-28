@@ -1,6 +1,6 @@
-local Lumina = {}
+local Axo = {}
 
-function Lumina.View(props)
+function Axo.View(props)
     return {
         type = "View",
         style = props.style or {},
@@ -9,7 +9,7 @@ function Lumina.View(props)
     }
 end
 
-function Lumina.Text(content, style)
+function Axo.Text(content, style)
     return {
         type = "Text",
         content = content or "",
@@ -18,7 +18,7 @@ function Lumina.Text(content, style)
     }
 end
 
-function Lumina.Button(props)
+function Axo.Button(props)
     return {
         type = "Button",
         content = props.text or "",
@@ -27,7 +27,7 @@ function Lumina.Button(props)
     }
 end
 
-function Lumina.Image(props)
+function Axo.Image(props)
     return {
         type = "Image",
         content = props.source or "",
@@ -36,7 +36,7 @@ function Lumina.Image(props)
     }
 end
 
-function Lumina.ScrollView(props)
+function Axo.ScrollView(props)
     return {
         type = "ScrollView",
         style = props.style or {},
@@ -45,7 +45,7 @@ function Lumina.ScrollView(props)
     }
 end
 
-function Lumina.TextInput(props)
+function Axo.TextInput(props)
     return {
         type = "TextInput",
         content = props.value or "",
@@ -55,92 +55,92 @@ function Lumina.TextInput(props)
 end
 
 -- Device API — wraps the Rust `Device` global for convenience
-function Lumina.Device()
+function Axo.Device()
     return _G.Device
 end
 
-function Lumina.getDeviceInfo()
+function Axo.getDeviceInfo()
     if _G.Device then
         return _G.Device.info()
     end
     return {}
 end
 
-function Lumina.checkPermission(name)
+function Axo.checkPermission(name)
     if _G.Device then
         return _G.Device.checkPermission(name)
     end
     return "denied"
 end
 
-function Lumina.requestPermission(name)
+function Axo.requestPermission(name)
     if _G.Device then
         return _G.Device.requestPermission(name)
     end
     return "denied"
 end
 
-function Lumina.getLocation()
+function Axo.getLocation()
     if _G.Device then
         return _G.Device.getLocation()
     end
     return nil
 end
 
-function Lumina.getSensors()
+function Axo.getSensors()
     if _G.Device then
         return _G.Device.getSensors()
     end
     return { accelerometer = nil, gyroscope = nil, magnetometer = nil }
 end
 
-function Lumina.readFile(path)
+function Axo.readFile(path)
     if _G.Device then
         return _G.Device.readFile(path)
     end
     return nil
 end
 
-function Lumina.writeFile(path, content)
+function Axo.writeFile(path, content)
     if _G.Device then
         return _G.Device.writeFile(path, content)
     end
     return false
 end
 
-function Lumina.deleteFile(path)
+function Axo.deleteFile(path)
     if _G.Device then
         return _G.Device.deleteFile(path)
     end
     return false
 end
 
-function Lumina.fileExists(path)
+function Axo.fileExists(path)
     if _G.Device then
         return _G.Device.fileExists(path)
     end
     return false
 end
 
-function Lumina.storagePath()
+function Axo.storagePath()
     if _G.Device then
         return _G.Device.storagePath()
     end
     return ""
 end
 
-function Lumina.showNotification(title, body)
+function Axo.showNotification(title, body)
     if _G.Device then
         return _G.Device.showNotification(title, body)
     end
     return false
 end
 
-function Lumina.takePhoto()
+function Axo.takePhoto()
     if _G.Device then
         return _G.Device.takePhoto()
     end
     return nil
 end
 
-return Lumina
+return Axo

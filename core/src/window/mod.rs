@@ -54,7 +54,7 @@ impl AppState {
 impl ApplicationHandler for AppState {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         let window_attrs = Window::default_attributes()
-            .with_title("Lumina Framework")
+            .with_title("Axo Framework")
             .with_inner_size(PhysicalSize::new(1024, 768));
 
         let window = Arc::new(event_loop.create_window(window_attrs).unwrap());

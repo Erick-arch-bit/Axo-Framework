@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-05-26
-- **Decision-makers:** Lumina Core Team
+- **Decision-makers:** Axo Core Team
 
 ## Context
 LuaJIT genera código JIT nativo (x86/ARM). WebAssembly no permite JIT, por lo que LuaJIT no funciona en web.

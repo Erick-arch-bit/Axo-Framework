@@ -9,7 +9,7 @@ pub struct ReleaseArgs {
     #[arg(long, default_value = "false")]
     pub bundle: bool,
 
-    #[arg(long, default_value = "lumina-app")]
+    #[arg(long, default_value = "axo-app")]
     pub name: String,
 }
 

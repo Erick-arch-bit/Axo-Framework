@@ -3,7 +3,7 @@ use std::sync::{Arc, Mutex};
 use clap::Args;
 use mlua::prelude::*;
 
-use lumina_core::window::ClickHandler;
+use axo_core::window::ClickHandler;
 
 static LUA_VM: std::sync::LazyLock<Mutex<Option<Lua>>> =
     std::sync::LazyLock::new(|| Mutex::new(None));
@@ -20,16 +20,16 @@ pub struct DevArgs {
     pub no_watch: bool,
 }
 
-fn load_and_build(entry: &str, viewport_w: f32, viewport_h: f32) -> Option<Vec<lumina_core::Rect>> {
-    match lumina_bridge::create_vm() {
+fn load_and_build(entry: &str, viewport_w: f32, viewport_h: f32) -> Option<Vec<axo_core::Rect>> {
+    match axo_bridge::create_vm() {
         Ok(lua) => {
-            match lumina_bridge::load_app(&lua, entry) {
+            match axo_bridge::load_app(&lua, entry) {
                 Ok(root) => {
                     // Move Lua VM to global storage for click callbacks
                     *LUA_VM.lock().unwrap() = Some(lua);
 
-                    let mut engine = lumina_core::layout::Engine::new();
-                    let rects = lumina_bridge::taffy_conv::build_rects(
+                    let mut engine = axo_core::layout::Engine::new();
+                    let rects = axo_bridge::taffy_conv::build_rects(
                         &mut engine, &root, viewport_w, viewport_h,
                     );
                     println!("[CLI] Loaded {} rectangles", rects.len());
@@ -55,8 +55,8 @@ fn make_click_handler() -> ClickHandler {
         }
         let state = LUA_VM.lock().unwrap();
         if let Some(ref lua) = *state {
-            if cb_id.starts_with("__lumina_cb_") {
-                if let Ok(callbacks) = lua.globals().get::<LuaTable>("_LUMINA_CALLBACKS") {
+            if cb_id.starts_with("__axo_cb_") {
+                if let Ok(callbacks) = lua.globals().get::<LuaTable>("_AXO_CALLBACKS") {
                     if let Ok(func) = callbacks.get::<LuaFunction>(cb_id) {
                         let _ = func.call::<()>(());
                     }
@@ -91,7 +91,7 @@ pub fn run(args: DevArgs) {
             .map(|p| p.to_string_lossy().to_string())
             .unwrap_or_else(|| ".".to_string());
 
-        lumina_core::hot_reload::watcher::watch(&app_dir, move || {
+        axo_core::hot_reload::watcher::watch(&app_dir, move || {
             if let Some(rects) = load_and_build(&entry, 1024.0, 768.0) {
                 *shared.lock().unwrap() = rects;
                 println!("[HotReload] UI updated!");
@@ -99,6 +99,6 @@ pub fn run(args: DevArgs) {
         });
     }
 
-    println!("[CLI] Launching Lumina window...");
-    lumina_core::window::run_with_shared_rects_and_handler(shared_rects, Some(click_handler));
+    println!("[CLI] Launching Axo window...");
+    axo_core::window::run_with_shared_rects_and_handler(shared_rects, Some(click_handler));
 }

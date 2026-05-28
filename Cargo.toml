@@ -11,9 +11,9 @@ members = [
 version = "0.1.1"
 edition = "2021"
 license = "MIT"
-description = "Lumina Framework"
-repository = "https://github.com/Erick-arch-bit/Lumina-Framework"
-homepage = "https://github.com/Erick-arch-bit/Lumina-Framework"
+description = "Axo Framework"
+repository = "https://github.com/Erick-arch-bit/Axo-Framework"
+homepage = "https://github.com/Erick-arch-bit/Axo-Framework"
 readme = "README.md"
 
 [workspace.dependencies]

@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-05-26
-- **Decision-makers:** Lumina Core Team
+- **Decision-makers:** Axo Core Team
 
 ## Context
 El renderizado pixel-by-pixel sin vistas nativas rompe la accesibilidad nativa (VoiceOver, TalkBack, lectores de pantalla).

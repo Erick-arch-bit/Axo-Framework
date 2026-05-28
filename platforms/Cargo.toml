@@ -1,9 +1,9 @@
 [package]
-name = "lumina-platforms"
+name = "axo-platforms"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "Platform backends for Lumina Framework: desktop (winit), Android (JNI), iOS (UIKit), Web (WASM)"
+description = "Platform backends for Axo Framework: desktop (winit), Android (JNI), iOS (UIKit), Web (WASM)"
 repository.workspace = true
 homepage.workspace = true
 readme = "../README.md"
@@ -11,8 +11,8 @@ keywords = ["ui", "gui", "cross-platform", "android", "wasm"]
 categories = ["gui", "game-engines", "wasm"]
 
 [dependencies]
-lumina-core = { path = "../core", version = "0.1" }
-lumina-bridge = { path = "../bridge", version = "0.1" }
+axo-core = { path = "../core", version = "0.1" }
+axo-bridge = { path = "../bridge", version = "0.1" }
 wgpu.workspace = true
 winit.workspace = true
 

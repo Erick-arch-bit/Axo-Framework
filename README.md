@@ -1,8 +1,8 @@
-# Lumina Framework
+# Axo Framework
 
 **Crea más rápido. Hazlo completo. Extiéndelo todo.**
 
-Lumina es un framework UI multiplataforma con motor **Rust** (wgpu) y capa de scripting **Lua**. Ideal para apps internas, dashboards embebidos, terminales POS, y herramientas de nicho.
+Axo es un framework UI multiplataforma con motor **Rust** (wgpu) y capa de scripting **Lua**. Ideal para apps internas, dashboards embebidos, terminales POS, y herramientas de nicho.
 
 ## Stack
 
@@ -22,14 +22,14 @@ Lumina es un framework UI multiplataforma con motor **Rust** (wgpu) y capa de sc
 cargo install --path cli
 
 # Crear proyecto
-lumina init my-app
+axo init my-app
 cd my-app
 
 # Desarrollo con hot reload
-lumina dev
+axo dev
 
 # Build producción
-lumina build --mode release
+axo build --mode release
 ```
 
 ## Conceptos
@@ -37,7 +37,7 @@ lumina build --mode release
 ### UI desde Lua
 
 ```lua
-local UI = require("lumina")
+local UI = require("axo")
 
 function App()
     return UI.View({
@@ -50,7 +50,7 @@ function App()
             alignItems = "center",
         },
         children = {
-            UI.Text("Hola Lumina!", {
+            UI.Text("Hola Axo!", {
                 fontSize = 24,
                 color = "#ffffff",
             }),
@@ -77,7 +77,7 @@ return App
 
 ### onClick — Nombres de función global
 
-`onClick` recibe un **string** con el nombre de una función Lua global. Cuando el usuario hace clic, Lumina busca y ejecuta esa función.
+`onClick` recibe un **string** con el nombre de una función Lua global. Cuando el usuario hace clic, Axo busca y ejecuta esa función.
 
 ```lua
 -- Function reference (almacenada automáticamente)
@@ -123,11 +123,11 @@ Device.writeFile("data.txt", "contenido")
 ## CLI
 
 ```bash
-lumina init <nombre>    # Scaffold proyecto
-lumina dev              # Desarrollo con hot reload
-lumina build            # Build debug
-lumina build --mode release  # Build producción
-lumina release          # Build + bundle
+axo init <nombre>    # Scaffold proyecto
+axo dev              # Desarrollo con hot reload
+axo build            # Build debug
+axo build --mode release  # Build producción
+axo release          # Build + bundle
 ```
 
 ## Estructura del proyecto
@@ -136,7 +136,7 @@ lumina release          # Build + bundle
 my-app/
 ├── app/
 │   ├── app.lua              # Entry point (debe retornar App())
-│   └── lumina/init.lua      # Std library (View, Text, Button, etc.)
+│       └── axo/init.lua      # Std library (View, Text, Button, etc.)
 └── README.md
 ```
 
@@ -158,4 +158,4 @@ my-app/
 ## Licencia
 
 MIT
-# Lumina-Framework
+# Axo-Framework

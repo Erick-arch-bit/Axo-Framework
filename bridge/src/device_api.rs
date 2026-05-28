@@ -1,8 +1,8 @@
 use mlua::prelude::*;
 use std::sync::{Arc, Mutex};
 
-use lumina_core::device::{DeviceInfo, GeoLocation, SensorData, Storage};
-use lumina_core::permissions::{DesktopPermissionHandler, Permission, PermissionHandler, PermissionState};
+use axo_core::device::{DeviceInfo, GeoLocation, SensorData, Storage};
+use axo_core::permissions::{DesktopPermissionHandler, Permission, PermissionHandler, PermissionState};
 
 pub struct DeviceBridge {
     pub permissions: Arc<Mutex<dyn PermissionHandler + Send>>,
@@ -22,7 +22,7 @@ impl DeviceBridge {
     pub fn new() -> Self {
         Self {
             permissions: Arc::new(Mutex::new(DesktopPermissionHandler::new())),
-            storage: Storage::new("lumina"),
+            storage: Storage::new("axo"),
             geo: GeoLocation::mock(),
             sensors: SensorData::current(),
             info: DeviceInfo::current(),

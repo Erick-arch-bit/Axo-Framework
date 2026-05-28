@@ -11,14 +11,14 @@ use crate::serde::UiNode;
 pub fn create_vm() -> LuaResult<Lua> {
     let lua = Lua::new();
 
-    // Set Lua package path so `require("lumina")` finds app/lumina/init.lua
+    // Set Lua package path so `require("axo")` finds app/axo/init.lua
     let globals = lua.globals();
     let package: LuaTable = globals.get("package")?;
     let current_path: String = package.get("path")?;
     let cwd = std::env::current_dir().unwrap_or_default().display().to_string();
-    let lumina_path = format!("{}/app/lumina/?.lua;{}/app/?/init.lua;{}/app/?.lua;{}",
+    let axo_path = format!("{}/app/axo/?.lua;{}/app/?/init.lua;{}/app/?.lua;{}",
         cwd, cwd, cwd, current_path);
-    package.set("path", lumina_path)?;
+    package.set("path", axo_path)?;
 
     let device_bridge = Arc::new(Mutex::new(DeviceBridge::new()));
 
@@ -26,7 +26,7 @@ pub fn create_vm() -> LuaResult<Lua> {
     {
         let globals = lua.globals();
         let callbacks = lua.create_table()?;
-        globals.set("_LUMINA_CALLBACKS", callbacks)?;
+        globals.set("_AXO_CALLBACKS", callbacks)?;
     }
 
     api::register_functions(&lua)?;

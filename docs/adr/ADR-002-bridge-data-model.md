@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-05-26
-- **Decision-makers:** Lumina Core Team
+- **Decision-makers:** Axo Core Team
 
 ## Context
 El puente Lua↔Rust debe transferir árboles de UI de forma eficiente. Enviar el árbol completo en cada frame (60fps) puede ser un bottleneck.
