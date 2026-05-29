@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Axo Framework — Crea más rápido. Hazlo completo. Extiéndelo todo.</title>
+    <meta name="description" content="Axo es un framework cross-platform con motor en Rust y UI en Lua. Apps nativas rápidas con wgpu, flexbox y hot reload." />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="logo">
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                    <rect width="32" height="32" rx="8" fill="#7c3aed"/>
+                    <path d="M8 22V10l8 6-8 6zM16 22V10l8 6-8 6z" fill="white" opacity="0.8"/>
+                </svg>
+                Axo
+            </a>
+            <div class="nav-links">
+                <a href="#features">Características</a>
+                <a href="#code">Código</a>
+                <a href="docs.html">Docs</a>
+                <a href="#install">Instalar</a>
+                <a href="https://github.com/Erick-arch-bit/Axo-Framework" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1>
+                <span class="gradient-text">Crea más rápido.</span><br />
+                <span>Hazlo completo.</span><br />
+                <span>Extiéndelo todo.</span>
+            </h1>
+            <p class="hero-sub">
+                Axo es un framework cross-platform con motor<br class="hide-mobile" />
+                en <strong>Rust</strong> y UI en <strong>Lua</strong>.
+                Renderiza con <strong>wgpu</strong>,<br class="hide-mobile" />
+                layout con <strong>Flexbox</strong>, y recarga en caliente.
+            </p>
+            <div class="hero-cta">
+                <a href="#install" class="btn btn-primary">Comenzar</a>
+                <a href="https://github.com/Erick-arch-bit/Axo-Framework" target="_blank" class="btn btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    GitHub
+                </a>
+            </div>
+            <p class="hero-install">cargo install axo-cli</p>
+        </div>
+    </section>
+
+    <section class="targets">
+        <div class="section-inner">
+            <p>Destinado a aplicaciones de nicho — dashboards embebidos, terminales POS, apps internas</p>
+            <div class="badge-row">
+                <span class="badge">Linux</span>
+                <span class="badge">macOS</span>
+                <span class="badge">Windows</span>
+                <span class="badge">Android</span>
+                <span class="badge">iOS</span>
+                <span class="badge">Web</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="section-inner">
+            <h2>Todo lo que necesitas, nada que sobre</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <h3>Rust Core</h3>
+                    <p>Motor escrito en Rust. Renderizado con wgpu (Vulkan/Metal/DX12/WebGL2). Layout con Taffy Flexbox.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <h3>Lua UI</h3>
+                    <p>Interfaz declarativa en Lua 5.4. Sin JS, sin npm. Tu UI es un árbol de tablas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    </div>
+                    <h3>Hot Reload</h3>
+                    <p>Edita tu código Lua y ve los cambios al instante. Sin compilar, sin reiniciar.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    </div>
+                    <h3>Permisos</h3>
+                    <p>Sistema de permisos granular con default Denied. Geolocalización, sensores, cámara y más.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <h3>Componentes</h3>
+                    <p>View, Text, Button, Image, TextInput, ScrollView, FlatList, Spacer, Divider, Pressable, SafeAreaView.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <h3>CLI Tooling</h3>
+                    <p><code>axo-cli init</code>, <code>dev</code>, <code>build</code>, <code>release</code>. Scaffolding, hot reload, y bundling.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="code" class="code-section">
+        <div class="section-inner">
+            <h2>Así se ve Axo</h2>
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span>app/app.lua</span>
+                </div>
+                <pre><code><span class="kw">local</span> UI = <span class="kw">require</span>(<span class="s">"axo"</span>)
+
+<span class="kw">function</span> <span class="nf">onClick</span>()
+    <span class="nb">log</span>(<span class="s">"Hello from Axo!"</span>)
+<span class="kw">end</span>
+
+<span class="kw">function</span> <span class="nf">App</span>()
+    <span class="kw">return</span> UI.View({
+        style = {
+            width = <span class="s">"100%"</span>,
+            height = <span class="s">"100%"</span>,
+            backgroundColor = <span class="s">"#1a1a2e"</span>,
+            flexDirection = <span class="s">"column"</span>,
+            justifyContent = <span class="s">"center"</span>,
+            alignItems = <span class="s">"center"</span>,
+        },
+        children = {
+            UI.Text({
+                text = <span class="s">"Hola desde Axo!"</span>,
+                style = { fontSize = <span class="n">28</span>, color = <span class="s">"#ffffff"</span> },
+            }),
+            UI.Button({
+                text = <span class="s">"Clic aquí"</span>,
+                onClick = <span class="s">"onClick"</span>,
+                style = {
+                    backgroundColor = <span class="s">"#e94560"</span>,
+                    width = <span class="s">"200"</span>,
+                    height = <span class="s">"50"</span>,
+                    margin = <span class="s">"10"</span>,
+                },
+            }),
+        },
+    })
+<span class="kw">end</span>
+
+<span class="kw">return</span> App</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section id="state" class="code-section">
+        <div class="section-inner">
+            <h2>Estado reactivo con <code>useState</code></h2>
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span>app/app.lua</span>
+                </div>
+                <pre><code><span class="kw">local</span> UI = <span class="kw">require</span>(<span class="s">"axo"</span>)
+
+<span class="c">-- Estado que persiste entre re-renders</span>
+<span class="kw">local</span> count = UI.useState(<span class="s">"counter"</span>, <span class="n">0</span>)
+
+<span class="kw">function</span> <span class="nf">handleIncrement</span>()
+    count.set(count.get() + <span class="n">1</span>)
+<span class="kw">end</span>
+
+<span class="kw">function</span> <span class="nf">handleDecrement</span>()
+    count.set(count.get() - <span class="n">1</span>)
+<span class="kw">end</span>
+
+<span class="kw">function</span> <span class="nf">App</span>()
+    <span class="kw">return</span> UI.View({
+        style = {
+            width = <span class="s">"100%"</span>, height = <span class="s">"100%"</span>,
+            backgroundColor = <span class="s">"#1a1a2e"</span>,
+            flexDirection = <span class="s">"column"</span>,
+            justifyContent = <span class="s">"center"</span>,
+            alignItems = <span class="s">"center"</span>,
+        },
+        children = {
+            UI.Text({
+                text = <span class="s">"Contador: "</span> .. count.get(),
+                style = { fontSize = <span class="n">32</span>, color = <span class="s">"#ffffff"</span> },
+            }),
+            UI.Button({
+                text = <span class="s">"+"</span>,
+                onClick = <span class="s">"handleIncrement"</span>,
+                style = { backgroundColor = <span class="s">"#e94560"</span>, width = <span class="s">"100"</span>, height = <span class="s">"50"</span>, margin = <span class="s">"5"</span> },
+            }),
+            UI.Button({
+                text = <span class="s">"-"</span>,
+                onClick = <span class="s">"handleDecrement"</span>,
+                style = { backgroundColor = <span class="s">"#0f3460"</span>, width = <span class="s">"100"</span>, height = <span class="s">"50"</span>, margin = <span class="s">"5"</span> },
+            }),
+        },
+    })
+<span class="kw">end</span>
+
+<span class="kw">return</span> App</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section id="install" class="install-section">
+        <div class="section-inner">
+            <h2>Empieza en segundos</h2>
+            <div class="install-steps">
+                <div class="install-step">
+                    <span class="step-num">1</span>
+                    <div>
+                        <h4>Instala el CLI</h4>
+                        <div class="copy-box">
+                            <code>cargo install axo-cli</code>
+                            <button class="copy-btn" data-copy="cargo install axo-cli">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="install-step">
+                    <span class="step-num">2</span>
+                    <div>
+                        <h4>Scaffold un proyecto</h4>
+                        <div class="copy-box">
+                            <code>axo-cli init my-app && cd my-app</code>
+                            <button class="copy-btn" data-copy="axo-cli init my-app && cd my-app">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="install-step">
+                    <span class="step-num">3</span>
+                    <div>
+                        <h4>Desarrolla con hot reload</h4>
+                        <div class="copy-box">
+                            <code>axo-cli dev</code>
+                            <button class="copy-btn" data-copy="axo-cli dev">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-left">
+                <div class="logo">
+                    <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="#7c3aed"/>
+                        <path d="M8 22V10l8 6-8 6zM16 22V10l8 6-8 6z" fill="white" opacity="0.8"/>
+                    </svg>
+                    Axo Framework
+                </div>
+                <p class="footer-lema">Crea más rápido. Hazlo completo. Extiéndelo todo.</p>
+                <p class="footer-license">MIT License &mdash; <a href="https://github.com/Erick-arch-bit/Axo-Framework">GitHub</a></p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h5>Recursos</h5>
+                    <a href="https://github.com/Erick-arch-bit/Axo-Framework">Repositorio</a>
+                    <a href="https://crates.io/crates/axo-cli">crates.io</a>
+                    <a href="https://docs.rs/axo-core">docs.rs</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Comunidad</h5>
+                    <a href="https://github.com/Erick-arch-bit/Axo-Framework/issues">Issues</a>
+                    <a href="https://github.com/Erick-arch-bit/Axo-Framework/discussions">Discussions</a>
+                    <a href="https://github.com/Erick-arch-bit/Axo-Framework/blob/main/CONTRIBUTING.md">Contribuir</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

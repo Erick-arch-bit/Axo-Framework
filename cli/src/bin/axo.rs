@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand};
 use axo_cli::{init, dev, build, release};
 
 #[derive(Parser)]
-#[command(name = "axo-cli", about = "Crea más rápido. Hazlo completo. Extiéndelo todo.")]
+#[command(name = "axo", about = "Crea más rápido. Hazlo completo. Extiéndelo todo.")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,

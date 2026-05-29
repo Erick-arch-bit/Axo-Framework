@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentación — Axo Framework</title>
+    <meta name="description" content="Documentación oficial de Axo Framework. Guías, API reference, componentes y CLI." />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="docs.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="/" class="logo">
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                    <rect width="32" height="32" rx="8" fill="#7c3aed"/>
+                    <path d="M8 22V10l8 6-8 6zM16 22V10l8 6-8 6z" fill="white" opacity="0.8"/>
+                </svg>
+                Axo
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Inicio</a>
+                <a href="docs.html" class="active">Docs</a>
+                <a href="https://github.com/Erick-arch-bit/Axo-Framework" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="docs-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-search">
+                <input type="text" id="docSearch" placeholder="Buscar en docs..." />
+            </div>
+            <nav class="sidebar-nav" id="sidebarNav">
+                <!-- Populated by JS -->
+            </nav>
+        </aside>
+
+        <main class="docs-content" id="docsContent">
+            <!-- Populated by JS -->
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-left">
+                <div class="logo">
+                    <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="#7c3aed"/>
+                        <path d="M8 22V10l8 6-8 6zM16 22V10l8 6-8 6z" fill="white" opacity="0.8"/>
+                    </svg>
+                    Axo Framework
+                </div>
+                <p class="footer-lema">Crea más rápido. Hazlo completo. Extiéndelo todo.</p>
+                <p class="footer-license">MIT License &mdash; <a href="https://github.com/Erick-arch-bit/Axo-Framework">GitHub</a></p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h5>Recursos</h5>
+                    <a href="https://github.com/Erick-arch-bit/Axo-Framework">Repositorio</a>
+                    <a href="https://crates.io/crates/axo-cli">crates.io</a>
+                    <a href="https://docs.rs/axo-core">docs.rs</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Comunidad</h5>
+                    <a href="https://github.com/Erick-arch-bit/Axo-Framework/issues">Issues</a>
+                    <a href="https://github.com/Erick-arch-bit/Axo-Framework/discussions">Discussions</a>
+                    <a href="https://github.com/Erick-arch-bit/Axo-Framework/blob/main/CONTRIBUTING.md">Contribuir</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="docs.js"></script>
+</body>
+</html>

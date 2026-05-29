@@ -7,21 +7,45 @@ pub struct UiNode {
     pub content: String,
     pub style: StyleMap,
     pub children: Vec<UiNode>,
+    pub on_change_text_id: String,
 }
 
 #[derive(Debug, Clone)]
 pub struct StyleMap {
     pub width: Option<LengthValue>,
     pub height: Option<LengthValue>,
+    pub min_width: Option<LengthValue>,
+    pub max_width: Option<LengthValue>,
+    pub min_height: Option<LengthValue>,
+    pub max_height: Option<LengthValue>,
     pub background_color: Option<[f32; 4]>,
     pub margin: Option<RectAuto>,
     pub padding: Option<Rect>,
     pub flex_direction: Option<FlexDirection>,
     pub justify_content: Option<JustifyContent>,
     pub align_items: Option<AlignItems>,
+    pub align_self: Option<AlignSelf>,
+    pub align_content: Option<AlignContent>,
+    pub flex_wrap: Option<FlexWrap>,
+    pub flex_grow: Option<f32>,
+    pub flex_shrink: Option<f32>,
+    pub gap: Option<f32>,
+    pub position: Option<PositionType>,
+    pub top: Option<LengthValue>,
+    pub left: Option<LengthValue>,
+    pub right: Option<LengthValue>,
+    pub bottom: Option<LengthValue>,
+    pub border_width: Option<f32>,
+    pub border_color: Option<[f32; 4]>,
     pub font_size: Option<f32>,
     pub color: Option<[f32; 4]>,
+    pub border_radius: Option<f32>,
     pub on_click_id: String,
+    pub hover_background_color: Option<[f32; 4]>,
+    pub active_background_color: Option<[f32; 4]>,
+    pub hover_color: Option<[f32; 4]>,
+    pub active_color: Option<[f32; 4]>,
+    pub disabled: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -80,6 +104,39 @@ pub enum AlignItems {
     Baseline,
 }
 
+#[derive(Debug, Clone)]
+pub enum FlexWrap {
+    NoWrap,
+    Wrap,
+    WrapReverse,
+}
+
+#[derive(Debug, Clone)]
+pub enum AlignSelf {
+    Auto,
+    FlexStart,
+    FlexEnd,
+    Center,
+    Stretch,
+    Baseline,
+}
+
+#[derive(Debug, Clone)]
+pub enum AlignContent {
+    FlexStart,
+    FlexEnd,
+    Center,
+    Stretch,
+    SpaceBetween,
+    SpaceAround,
+}
+
+#[derive(Debug, Clone)]
+pub enum PositionType {
+    Relative,
+    Absolute,
+}
+
 impl Default for StyleMap {
     fn default() -> Self {
         Self::new()
@@ -89,11 +146,23 @@ impl Default for StyleMap {
 impl StyleMap {
     pub fn new() -> Self {
         StyleMap {
-            width: None, height: None, background_color: None,
+            width: None, height: None,
+            min_width: None, max_width: None, min_height: None, max_height: None,
+            background_color: None,
             margin: None, padding: None,
             flex_direction: None, justify_content: None, align_items: None,
+            align_self: None, align_content: None, flex_wrap: None,
+            flex_grow: None, flex_shrink: None, gap: None,
+            position: None, top: None, left: None, right: None, bottom: None,
+            border_width: None, border_color: None,
             font_size: None, color: None,
+            border_radius: None,
             on_click_id: String::new(),
+            hover_background_color: None,
+            active_background_color: None,
+            hover_color: None,
+            active_color: None,
+            disabled: false,
         }
     }
 }
@@ -174,6 +243,47 @@ fn parse_justify_content(s: &str) -> Option<JustifyContent> {
     }
 }
 
+fn parse_flex_wrap(s: &str) -> Option<FlexWrap> {
+    match s {
+        "nowrap" | "no-wrap" => Some(FlexWrap::NoWrap),
+        "wrap" => Some(FlexWrap::Wrap),
+        "wrapReverse" | "wrap-reverse" => Some(FlexWrap::WrapReverse),
+        _ => None,
+    }
+}
+
+fn parse_align_self(s: &str) -> Option<AlignSelf> {
+    match s {
+        "auto" => Some(AlignSelf::Auto),
+        "flexStart" | "flex-start" => Some(AlignSelf::FlexStart),
+        "flexEnd" | "flex-end" => Some(AlignSelf::FlexEnd),
+        "center" => Some(AlignSelf::Center),
+        "stretch" => Some(AlignSelf::Stretch),
+        "baseline" => Some(AlignSelf::Baseline),
+        _ => None,
+    }
+}
+
+fn parse_align_content(s: &str) -> Option<AlignContent> {
+    match s {
+        "flexStart" | "flex-start" => Some(AlignContent::FlexStart),
+        "flexEnd" | "flex-end" => Some(AlignContent::FlexEnd),
+        "center" => Some(AlignContent::Center),
+        "stretch" => Some(AlignContent::Stretch),
+        "spaceBetween" | "space-between" => Some(AlignContent::SpaceBetween),
+        "spaceAround" | "space-around" => Some(AlignContent::SpaceAround),
+        _ => None,
+    }
+}
+
+fn parse_position(s: &str) -> Option<PositionType> {
+    match s {
+        "relative" => Some(PositionType::Relative),
+        "absolute" => Some(PositionType::Absolute),
+        _ => None,
+    }
+}
+
 fn parse_align_items(s: &str) -> Option<AlignItems> {
     match s {
         "flexStart" | "flex-start" => Some(AlignItems::FlexStart),
@@ -195,14 +305,32 @@ fn parse_style(table: &LuaTable) -> LuaResult<StyleMap> {
 
     if let Some(s) = style_get_string(table, "width") { style.width = parse_length(&s); }
     if let Some(s) = style_get_string(table, "height") { style.height = parse_length(&s); }
+    if let Some(s) = style_get_string(table, "minWidth") { style.min_width = parse_length(&s); }
+    if let Some(s) = style_get_string(table, "maxWidth") { style.max_width = parse_length(&s); }
+    if let Some(s) = style_get_string(table, "minHeight") { style.min_height = parse_length(&s); }
+    if let Some(s) = style_get_string(table, "maxHeight") { style.max_height = parse_length(&s); }
     if let Some(s) = style_get_string(table, "backgroundColor") { style.background_color = parse_hex_color(&s); }
     if let Some(s) = style_get_string(table, "margin") { style.margin = parse_rect_auto(&s); }
     if let Some(s) = style_get_string(table, "padding") { style.padding = parse_rect(&s); }
     if let Some(s) = style_get_string(table, "flexDirection") { style.flex_direction = parse_flex_direction(&s); }
     if let Some(s) = style_get_string(table, "justifyContent") { style.justify_content = parse_justify_content(&s); }
     if let Some(s) = style_get_string(table, "alignItems") { style.align_items = parse_align_items(&s); }
+    if let Some(s) = style_get_string(table, "alignSelf") { style.align_self = parse_align_self(&s); }
+    if let Some(s) = style_get_string(table, "alignContent") { style.align_content = parse_align_content(&s); }
+    if let Some(s) = style_get_string(table, "flexWrap") { style.flex_wrap = parse_flex_wrap(&s); }
+    if let Some(s) = style_get_string(table, "position") { style.position = parse_position(&s); }
+    if let Some(s) = style_get_string(table, "top") { style.top = parse_length(&s); }
+    if let Some(s) = style_get_string(table, "left") { style.left = parse_length(&s); }
+    if let Some(s) = style_get_string(table, "right") { style.right = parse_length(&s); }
+    if let Some(s) = style_get_string(table, "bottom") { style.bottom = parse_length(&s); }
+    if let Some(s) = style_get_string(table, "gap") { if let Ok(n) = s.parse() { style.gap = Some(n); } }
+    if let Some(s) = style_get_string(table, "flexGrow") { if let Ok(n) = s.parse() { style.flex_grow = Some(n); } }
+    if let Some(s) = style_get_string(table, "flexShrink") { if let Ok(n) = s.parse() { style.flex_shrink = Some(n); } }
+    if let Some(s) = style_get_string(table, "borderWidth") { if let Ok(n) = s.parse() { style.border_width = Some(n); } }
+    if let Some(s) = style_get_string(table, "borderColor") { style.border_color = parse_hex_color(&s); }
     if let Some(s) = style_get_string(table, "color") { style.color = parse_hex_color(&s); }
     if let Some(s) = style_get_string(table, "fontSize") { if let Ok(n) = s.parse() { style.font_size = Some(n); } }
+    if let Some(s) = style_get_string(table, "borderRadius") { if let Ok(n) = s.parse() { style.border_radius = Some(n); } }
 
     Ok(style)
 }
@@ -224,7 +352,6 @@ pub fn table_to_ui_node(table: &LuaTable, lua: &Lua) -> LuaResult<UiNode> {
                 style.on_click_id = s.to_string_lossy().to_string();
             }
             LuaValue::Function(f) => {
-                // Store function reference by name and store the name
                 let name = format!("__axo_cb_{}", f.to_pointer() as u64);
                 let globals = lua.globals();
                 if let Ok(callbacks) = globals.get::<LuaTable>("_AXO_CALLBACKS") {
@@ -235,6 +362,40 @@ pub fn table_to_ui_node(table: &LuaTable, lua: &Lua) -> LuaResult<UiNode> {
             _ => {}
         }
     }
+
+    // Parse hoverStyle, activeStyle, disabled from props
+    if let Ok(hover_table) = table.get::<LuaTable>("hoverStyle") {
+        style.hover_background_color = style_get_string(&hover_table, "backgroundColor")
+            .and_then(|s| parse_hex_color(&s));
+        style.hover_color = style_get_string(&hover_table, "color")
+            .and_then(|s| parse_hex_color(&s));
+    }
+    if let Ok(active_table) = table.get::<LuaTable>("activeStyle") {
+        style.active_background_color = style_get_string(&active_table, "backgroundColor")
+            .and_then(|s| parse_hex_color(&s));
+        style.active_color = style_get_string(&active_table, "color")
+            .and_then(|s| parse_hex_color(&s));
+    }
+    if let Ok(disabled_val) = table.get::<LuaValue>("disabled") {
+        style.disabled = match disabled_val {
+            LuaValue::Boolean(b) => b,
+            LuaValue::String(s) => s.to_string_lossy() == "true",
+            _ => false,
+        };
+    }
+
+    let on_change_text_id: String = match table.get::<LuaValue>("onChangeText") {
+        Ok(LuaValue::String(s)) => s.to_string_lossy().to_string(),
+        Ok(LuaValue::Function(f)) => {
+            let name = format!("__axo_cb_{}", f.to_pointer() as u64);
+            let globals = lua.globals();
+            if let Ok(callbacks) = globals.get::<LuaTable>("_AXO_CALLBACKS") {
+                let _ = callbacks.set(name.as_str(), f);
+            }
+            name
+        }
+        _ => String::new(),
+    };
 
     let children_raw: LuaTable = match table.get("children") {
         Ok(t) => t,
@@ -247,5 +408,5 @@ pub fn table_to_ui_node(table: &LuaTable, lua: &Lua) -> LuaResult<UiNode> {
         children.push(table_to_ui_node(&child_table, lua)?);
     }
 
-    Ok(UiNode { id: 0, node_type, content, style, children })
+    Ok(UiNode { id: 0, node_type, content, style, children, on_change_text_id })
 }

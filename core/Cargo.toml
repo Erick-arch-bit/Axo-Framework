@@ -21,3 +21,4 @@ pollster = "0.4"
 bytemuck.workspace = true
 dirs-next = "2.0"
 ab_glyph = "0.2"
+image = "0.25"

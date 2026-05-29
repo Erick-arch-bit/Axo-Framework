@@ -23,7 +23,6 @@ where
 
     println!("[HotReload] Watching {} for changes...", path);
 
-    // Keep watcher alive
     std::thread::spawn(move || {
         for event in rx {
             match event {
@@ -44,8 +43,8 @@ where
                 Err(e) => eprintln!("[HotReload] Watch error: {}", e),
             }
         }
-
-        // Drop watcher when thread ends
-        drop(watcher);
     });
+
+    // Keep watcher alive on the main thread (or leak it)
+    std::mem::forget(watcher);
 }

@@ -1,9 +1,21 @@
+pub mod battery;
+pub mod clipboard;
+pub mod display;
 pub mod geolocation;
+pub mod haptics;
 pub mod info;
+pub mod network;
 pub mod sensors;
 pub mod storage;
+pub mod system;
 
+pub use battery::*;
+pub use clipboard::*;
+pub use display::*;
 pub use geolocation::*;
+pub use haptics::*;
 pub use info::*;
+pub use network::*;
 pub use sensors::*;
 pub use storage::*;
+pub use system::*;
