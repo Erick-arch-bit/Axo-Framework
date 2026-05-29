@@ -333,8 +333,9 @@ impl Renderer {
         self.surface.configure(&self.device, &self.config);
     }
 
-    fn draw_rect_internal(&self, rpass: &mut wgpu::RenderPass, x: f32, y: f32, w: f32, h: f32, color: [f32; 4], border_radius: f32) {
-        let ru = RectUniform { x, y, w, h, r: color[0], g: color[1], b: color[2], a: color[3], border_radius };
+    #[allow(clippy::too_many_arguments)]
+    fn draw_rect_internal(&self, rpass: &mut wgpu::RenderPass, x: f32, y: f32, w: f32, h: f32, color: [f32; 4], br: f32) {
+        let ru = RectUniform { x, y, w, h, r: color[0], g: color[1], b: color[2], a: color[3], border_radius: br };
         self.queue.write_buffer(&self.rect_buffer, 0, bytemuck::bytes_of(&ru));
         rpass.draw(0..6, 0..1);
     }

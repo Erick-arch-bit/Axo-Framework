@@ -27,6 +27,24 @@ function Axo.useState(key, initialValue)
     }
 end
 
+-- Utility: shallow merge b into a (b wins)
+local function mergeInto(a, b)
+    if not b then return a end
+    for k, v in pairs(b) do a[k] = v end
+    return a
+end
+
+-- Utility: merge two tables into a new one (b wins on conflict)
+local function mergeTables(a, b)
+    local r = {}
+    if a then for k, v in pairs(a) do r[k] = v end end
+    if b then for k, v in pairs(b) do r[k] = v end end
+    return r
+end
+
+-- Component registry for modding
+local _components = {}
+
 -- CSS-like pseudo props
 local function extractPseudoProps(props)
     return {
@@ -54,6 +72,69 @@ local function baseNode(props, nodeType, overrides)
         for k, v in pairs(overrides.extra) do node[k] = v end
     end
     return node
+end
+
+-- ── Modding API ──
+
+--- Define a custom component
+--- @param name string        Component name (e.g. "MyButton")
+--- @param config table|function
+---   If function: called with (props), must return a node
+---   If table: { extends="View", style={}, hoverStyle={}, activeStyle={},
+---               beforeStyle=fn(style,props), afterStyle=fn(style,props),
+---               render=fn(props) -> node }
+function Axo.defineComponent(name, config)
+    if type(config) == "function" then
+        _components[name] = config
+        Axo[name] = config
+        return
+    end
+    _components[name] = config
+    local parent = config.extends or "View"
+    local baseStyle = config.style or {}
+    local baseHover = config.hoverStyle
+    local baseActive = config.activeStyle
+    Axo[name] = function(props)
+        props = props or {}
+        local mergedStyle = mergeTables(baseStyle, props.style)
+        if config.beforeStyle then config.beforeStyle(mergedStyle, props) end
+        if config.afterStyle then config.afterStyle(mergedStyle, props) end
+        local overrides = { style = mergedStyle }
+        if baseHover or props.hoverStyle then
+            overrides.hoverStyle = mergeTables(baseHover, props.hoverStyle)
+        end
+        if baseActive or props.activeStyle then
+            overrides.activeStyle = mergeTables(baseActive, props.activeStyle)
+        end
+        if config.render then
+            local node = config.render(props)
+            if node then return node end
+        end
+        return baseNode(props, parent, overrides)
+    end
+end
+
+--- Alias for defineComponent
+Axo.createComponent = Axo.defineComponent
+
+--- Retrieve a registered component (useful for meta-programming)
+function Axo.getComponent(name)
+    return _components[name] or Axo[name]
+end
+
+--- List all registered component names
+function Axo.listComponents()
+    local names = {}
+    for name, _ in pairs(_components) do table.insert(names, name) end
+    for name, _ in pairs(Axo) do
+        if type(Axo[name]) == "function" and name ~= "defineComponent"
+            and name ~= "createComponent" and name ~= "getComponent"
+            and name ~= "listComponents" and name ~= "useState"
+            and name ~= "Device" then
+            table.insert(names, name)
+        end
+    end
+    return names
 end
 
 -- ── Layout ──
@@ -177,12 +258,12 @@ end
 function Axo.Divider(props)
     props = props or {}
     return baseNode(props, "View", {
-        style = {
+        style = mergeTables({
             width = props.vertical and "1" or "100%",
             height = props.vertical and "100%" or "1",
             backgroundColor = props.color or "#333333",
             margin = props.margin or "4",
-        },
+        }, props.style),
     })
 end
 
@@ -203,58 +284,52 @@ end
 
 function Axo.Badge(props)
     props = props or {}
-    return baseNode(props, "Text", {
-        content = props.text or "",
-        style = {
-            backgroundColor = props.color or "#e94560",
-            color = props.textColor or "#ffffff",
-            fontSize = props.fontSize or "12",
-            padding = "4 8",
-            borderRadius = "12",
-            alignSelf = "flex-start",
-        },
-    })
+    local s = mergeTables({
+        backgroundColor = props.color or "#e94560",
+        color = props.textColor or "#ffffff",
+        fontSize = props.fontSize or "12",
+        padding = "4 8",
+        borderRadius = "12",
+        alignSelf = "flex-start",
+    }, props.style)
+    return baseNode(props, "Text", { content = props.text or "", style = s })
 end
 
 function Axo.Chip(props)
     props = props or {}
+    local s = mergeTables({
+        backgroundColor = props.color or "#333355",
+        padding = "4 12",
+        borderRadius = "16",
+        alignSelf = "flex-start",
+        margin = props.margin or "2",
+    }, props.style)
+    local ts = mergeTables({ color = props.textColor or "#ffffff", fontSize = props.fontSize or "13" }, props.textStyle)
     return baseNode(props, "View", {
-        style = {
-            backgroundColor = props.color or "#333355",
-            padding = "4 12",
-            borderRadius = "16",
-            alignSelf = "flex-start",
-            margin = props.margin or "2",
-        },
-        children = {
-            Axo.Text({
-                text = props.text or "",
-                style = { color = props.textColor or "#ffffff", fontSize = props.fontSize or "13" },
-            }),
-        },
+        style = s,
+        children = { Axo.Text({ text = props.text or "", style = ts }) },
     })
 end
 
 function Axo.ProgressBar(props)
     props = props or {}
     local progress = math.min(math.max(props.progress or 0, 0), 1)
+    local s = mergeTables({
+        width = props.width or "100%",
+        height = props.height or "8",
+        backgroundColor = props.trackColor or "#333355",
+        borderRadius = "4",
+        overflow = "hidden",
+    }, props.style)
     return baseNode(props, "View", {
-        style = {
-            width = props.width or "100%",
-            height = props.height or "8",
-            backgroundColor = props.trackColor or "#333355",
-            borderRadius = "4",
-            overflow = "hidden",
-        },
+        style = s,
         children = {
-            Axo.View({
-                style = {
-                    width = tostring(progress * 100) .. "%",
-                    height = "100%",
-                    backgroundColor = props.color or "#e94560",
-                    borderRadius = "4",
-                },
-            }),
+            Axo.View({ style = {
+                width = tostring(progress * 100) .. "%",
+                height = "100%",
+                backgroundColor = props.color or "#e94560",
+                borderRadius = "4",
+            }}),
         },
     })
 end
@@ -262,29 +337,23 @@ end
 function Axo.Switch(props)
     props = props or {}
     local isOn = props.value or false
-    local trackColor = isOn and (props.activeColor or "#e94560") or (props.inactiveColor or "#444466")
-    local thumbColor = "#ffffff"
-    local thumbOffset = isOn and "20" or "2"
-
+    local s = mergeTables({
+        width = "44",
+        height = "24",
+        backgroundColor = isOn and (props.activeColor or "#e94560") or (props.inactiveColor or "#444466"),
+        borderRadius = "12",
+        justifyContent = "center",
+        margin = props.margin or "4",
+    }, props.style)
     return baseNode(props, "View", {
-        style = {
-            width = "44",
-            height = "24",
-            backgroundColor = trackColor,
-            borderRadius = "12",
-            justifyContent = "center",
-            margin = props.margin or "4",
-        },
+        style = s,
         children = {
-            Axo.View({
-                style = {
-                    width = "20",
-                    height = "20",
-                    backgroundColor = thumbColor,
-                    borderRadius = "10",
-                    marginLeft = thumbOffset,
-                },
-            }),
+            Axo.View({ style = {
+                width = "20", height = "20",
+                backgroundColor = "#ffffff",
+                borderRadius = "10",
+                marginLeft = isOn and "22" or "2",
+            }}),
         },
     })
 end
@@ -292,22 +361,19 @@ end
 function Axo.Checkbox(props)
     props = props or {}
     local checked = props.value or false
+    local s = mergeTables({
+        width = "20", height = "20",
+        backgroundColor = checked and (props.activeColor or "#e94560") or (props.inactiveColor or "#333355"),
+        borderRadius = "4",
+        borderWidth = "2",
+        borderColor = checked and (props.activeColor or "#e94560") or (props.borderColor or "#555577"),
+        justifyContent = "center",
+        alignItems = "center",
+    }, props.style)
     return baseNode(props, "View", {
-        style = {
-            width = "20",
-            height = "20",
-            backgroundColor = checked and (props.activeColor or "#e94560") or (props.inactiveColor or "#333355"),
-            borderRadius = "4",
-            borderWidth = "2",
-            borderColor = checked and (props.activeColor or "#e94560") or (props.borderColor or "#555577"),
-            justifyContent = "center",
-            alignItems = "center",
-        },
+        style = s,
         children = checked and {
-            Axo.Text({
-                text = "✓",
-                style = { color = "#ffffff", fontSize = "14", fontWeight = "bold" },
-            }),
+            Axo.Text({ text = "✓", style = { color = "#ffffff", fontSize = "14", fontWeight = "bold" }}),
         } or {},
     })
 end
@@ -315,26 +381,23 @@ end
 function Axo.RadioButton(props)
     props = props or {}
     local selected = props.value or false
+    local s = mergeTables({
+        width = "20", height = "20",
+        backgroundColor = "transparent",
+        borderRadius = "10",
+        borderWidth = "2",
+        borderColor = selected and (props.activeColor or "#e94560") or (props.borderColor or "#555577"),
+        justifyContent = "center",
+        alignItems = "center",
+    }, props.style)
     return baseNode(props, "View", {
-        style = {
-            width = "20",
-            height = "20",
-            backgroundColor = "transparent",
-            borderRadius = "10",
-            borderWidth = "2",
-            borderColor = selected and (props.activeColor or "#e94560") or (props.borderColor or "#555577"),
-            justifyContent = "center",
-            alignItems = "center",
-        },
+        style = s,
         children = selected and {
-            Axo.View({
-                style = {
-                    width = "10",
-                    height = "10",
-                    backgroundColor = props.activeColor or "#e94560",
-                    borderRadius = "5",
-                },
-            }),
+            Axo.View({ style = {
+                width = "10", height = "10",
+                backgroundColor = props.activeColor or "#e94560",
+                borderRadius = "5",
+            }}),
         } or {},
     })
 end
@@ -342,44 +405,28 @@ end
 function Axo.Slider(props)
     props = props or {}
     local val = props.value or 0.5
+    local s = mergeTables({ width = props.width or "200", height = "24", justifyContent = "center" }, props.style)
     return baseNode(props, "View", {
-        style = {
-            width = props.width or "200",
-            height = "24",
-            justifyContent = "center",
-        },
+        style = s,
         children = {
-            -- Track
-            Axo.View({
-                style = {
-                    width = "100%",
-                    height = "4",
-                    backgroundColor = props.trackColor or "#333355",
-                    borderRadius = "2",
-                },
+            Axo.View({ style = mergeTables(mergeTables({
+                width = "100%", height = "4",
+                backgroundColor = props.trackColor or "#333355",
+                borderRadius = "2",
+            }, props.trackStyle), {
                 children = {
-                    -- Fill
-                    Axo.View({
-                        style = {
-                            width = tostring(val * 100) .. "%",
-                            height = "100%",
-                            backgroundColor = props.color or "#e94560",
-                            borderRadius = "2",
-                        },
-                    }),
+                    Axo.View({ style = {
+                        width = tostring(val * 100) .. "%", height = "100%",
+                        backgroundColor = props.color or "#e94560",
+                        borderRadius = "2",
+                    }}),
                 },
-            }),
-            -- Thumb
-            Axo.View({
-                style = {
-                    position = "absolute",
-                    width = "16",
-                    height = "16",
-                    backgroundColor = "#ffffff",
-                    borderRadius = "8",
-                    marginLeft = tostring(val * 100 - 8) .. "%",
-                },
-            }),
+            })}),
+            Axo.View({ style = mergeTables({
+                position = "absolute", width = "16", height = "16",
+                backgroundColor = "#ffffff", borderRadius = "8",
+                marginLeft = tostring(val * 100 - 8) .. "%",
+            }, props.thumbStyle)}),
         },
     })
 end
@@ -389,31 +436,21 @@ function Axo.List(props)
     local items = {}
     if props.data then
         for i, item in ipairs(props.data) do
-            local separator = i < #props.data and {
-                Axo.Divider({ color = props.separatorColor or "#333355", margin = "0" }),
-            } or {}
+            if i > 1 then
+                table.insert(items, Axo.Divider({ color = props.separatorColor or "#333355", margin = "0" }))
+            end
             local row = Axo.View({
-                style = {
-                    flexDirection = "row",
-                    alignItems = "center",
-                    padding = props.itemPadding or "12 16",
-                },
-                children = {
-                    props.renderItem and props.renderItem({ item = item, index = i - 1 }),
-                },
+                style = { flexDirection = "row", alignItems = "center", padding = props.itemPadding or "12 16" },
+                children = { props.renderItem and props.renderItem({ item = item, index = i - 1 }) },
             })
             if props.onItemPress then
                 row.onClick = function() props.onItemPress({ item = item, index = i - 1 }) end
             end
             table.insert(items, row)
-            for _, s in ipairs(separator) do table.insert(items, s) end
         end
     end
     return baseNode(props, "View", {
-        style = {
-            width = "100%",
-            backgroundColor = props.backgroundColor or "transparent",
-        },
+        style = mergeTables({ width = "100%", backgroundColor = props.backgroundColor or "transparent" }, props.style),
         children = items,
     })
 end
