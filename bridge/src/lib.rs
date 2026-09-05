@@ -9,6 +9,89 @@ pub mod ui;
 pub mod callbacks;
 pub mod js_serde;
 
+// --- API pública del motor JS (Fase 1 — bridge mínimo) ---
+pub use runtime::create_js_runtime;
+pub use js_serde::js_to_ui_node;
+
+/// Crea una VM de QuickJS lista para usar (Fase 1).
+pub fn create_js_vm() -> Result<rquickjs::Context, Box<dyn std::error::Error>> {
+    // Fase 1: Runtime + contexto con console.log registrado.
+    let rt = runtime::create_js_runtime()?;
+    let ctx = rquickjs::Context::full(&rt)?;
+    ctx.with(|ctx| runtime::register_console(ctx))?;
+    Ok(ctx)
+}
+
+/// Carga un archivo .js, evalúa la función/objeto exportado y lo convierte a UiNode.
+///
+/// Contrato Fase 1:
+/// - El archivo debe evaluar a una función que al llamarse devuelve el árbol UI,
+///   o directamente a un objeto que representa el árbol.
+/// - Ejemplo mínimo aceptado:
+///   ```js
+///   function App() {
+///     return {
+///       type: "View",
+///       style: { width: "100%", height: "100%", backgroundColor: "#1a1a2e" },
+///       children: [
+///         { type: "Text", content: "Hola desde JS", style: { fontSize: 24, color: "#ffffff" } }
+///       ]
+///     };
+///   }
+///   App; // o export / return App
+///   ```
+pub fn load_js_app(path: &str) -> Result<crate::serde::UiNode, Box<dyn std::error::Error>> {
+    // Fase 1: 1. Leer el archivo.
+    let code = std::fs::read_to_string(path)?;
+    // Fase 1: 2. Crear runtime + context.
+    let ctx = create_js_vm()?;
+    // Fase 1: 3-6. Evaluar, invocar si es función y convertir a UiNode (dentro del scope del contexto).
+    let node: crate::serde::UiNode = ctx.with(|ctx| -> Result<crate::serde::UiNode, Box<dyn std::error::Error>> {
+        // Fase 1: 3. Evaluar el código.
+        let v: rquickjs::Value = ctx.eval(code.clone())?;
+        // Fase 1: 4. Si el resultado es función → llamarla.
+        let target: rquickjs::Value = if v.is_function() {
+            let func = rquickjs::Function::from_value(v)?;
+            func.call::<_, rquickjs::Value>(())?
+        } else {
+            v
+        };
+        // Fase 1: 5-6. Convertir el valor resultante con js_to_ui_node y devolver UiNode.
+        js_to_ui_node(target).map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e).into())
+    })?;
+    Ok(node)
+}
+
+// Fase 1: verificación mínima del flujo app.js → QuickJS → UiNode.
+#[allow(dead_code)]
+pub fn fase1_smoke_test() -> Result<(), Box<dyn std::error::Error>> {
+    // Fase 1: ruta relativa al workspace (con fallback según working directory).
+    let candidates = [
+        "app/examples/js-hello/app.js",
+        "../app/examples/js-hello/app.js",
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../app/examples/js-hello/app.js"),
+    ];
+    let mut last_err: Option<Box<dyn std::error::Error>> = None;
+    for path in candidates {
+        match load_js_app(path) {
+            Ok(root) => {
+                assert_eq!(root.node_type, "View");
+                assert!(!root.children.is_empty());
+                assert_eq!(root.children[0].node_type, "Text");
+                assert_eq!(root.children[0].content, "Hola desde QuickJS");
+                println!("[Fase 1] OK: {path} → View con {} hijo(s)", root.children.len());
+                return Ok(());
+            }
+            Err(e) if std::fs::metadata(path).is_err() => {
+                last_err = Some(e);
+                continue;
+            }
+            Err(e) => return Err(e),
+        }
+    }
+    Err(last_err.unwrap_or_else(|| std::io::Error::new(std::io::ErrorKind::Other, "Fase 1: app.js no encontrado").into()))
+}
+
 use std::sync::{Arc, Mutex};
 use mlua::prelude::*;
 use crate::device_api::DeviceBridge;
