@@ -5,10 +5,97 @@
 // dentro de callbacks (lifetimes de rquickjs) y el contrato JS queda explícito.
 use std::sync::{Arc, Mutex};
 use rquickjs::{Ctx, Function, Object};
-use crate::device_api::DeviceBridge;
-use axo_core::permissions::{Permission, PermissionHandler, PermissionState};
+use axo_core::device::{
+    BatteryInfo, DeviceInfo, DisplayInfo, GeoLocation, NetworkInfo, SensorData, Storage,
+    SystemInfo,
+};
+use axo_core::permissions::{
+    AndroidPermissionHandler, DesktopPermissionHandler, IosPermissionHandler, Permission,
+    PermissionHandler, PermissionState, WindowsPermissionHandler,
+};
 
-// Fase 4: mismo mapeo que el bridge Lua (estados + "unsupported" para nombres desconocidos).
+// Fase 5: estado compartido del dispositivo (antes en device_api.rs; solo queda lo que usa el bridge JS).
+pub enum PlatformPermissions {
+    Desktop(DesktopPermissionHandler),
+    Android(AndroidPermissionHandler),
+    Ios(IosPermissionHandler),
+    Windows(WindowsPermissionHandler),
+}
+
+impl PermissionHandler for PlatformPermissions {
+    fn check_permission(&self, perm: Permission) -> PermissionState {
+        match self {
+            Self::Desktop(h) => h.check_permission(perm),
+            Self::Android(h) => h.check_permission(perm),
+            Self::Ios(h) => h.check_permission(perm),
+            Self::Windows(h) => h.check_permission(perm),
+        }
+    }
+
+    fn request_permission(&mut self, perm: Permission) -> PermissionState {
+        match self {
+            Self::Desktop(h) => h.request_permission(perm),
+            Self::Android(h) => h.request_permission(perm),
+            Self::Ios(h) => h.request_permission(perm),
+            Self::Windows(h) => h.request_permission(perm),
+        }
+    }
+
+    fn open_settings(&mut self) -> bool {
+        match self {
+            Self::Desktop(h) => h.open_settings(),
+            Self::Android(h) => h.open_settings(),
+            Self::Ios(h) => h.open_settings(),
+            Self::Windows(h) => h.open_settings(),
+        }
+    }
+}
+
+pub struct DeviceBridge {
+    pub permissions: Arc<Mutex<PlatformPermissions>>,
+    pub storage: Storage,
+    pub geo: GeoLocation,
+    pub sensors: SensorData,
+    pub info: DeviceInfo,
+    pub battery: BatteryInfo,
+    pub network: NetworkInfo,
+    pub display: DisplayInfo,
+    pub system: SystemInfo,
+}
+
+impl Default for DeviceBridge {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl DeviceBridge {
+    pub fn new() -> Self {
+        let platform = if cfg!(target_os = "android") {
+            PlatformPermissions::Android(AndroidPermissionHandler::new())
+        } else if cfg!(target_os = "ios") {
+            PlatformPermissions::Ios(IosPermissionHandler::new())
+        } else if cfg!(target_os = "windows") {
+            PlatformPermissions::Windows(WindowsPermissionHandler::new())
+        } else {
+            PlatformPermissions::Desktop(DesktopPermissionHandler::new())
+        };
+
+        Self {
+            permissions: Arc::new(Mutex::new(platform)),
+            storage: Storage::new("axo"),
+            geo: GeoLocation::mock(),
+            sensors: SensorData::current(),
+            info: DeviceInfo::current(),
+            battery: BatteryInfo::current(),
+            network: NetworkInfo::current(),
+            display: DisplayInfo::current(),
+            system: SystemInfo::current(),
+        }
+    }
+}
+
+// Fase 4: mapeo de estados de permiso a string (granted/denied/... + "unsupported").
 fn perm_state_str(state: PermissionState) -> &'static str {
     match state {
         PermissionState::Granted => "granted",

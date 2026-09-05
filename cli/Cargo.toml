@@ -7,7 +7,7 @@ description = "CLI tool for Axo Framework: init, dev (hot-reload), build, and re
 repository.workspace = true
 homepage.workspace = true
 readme = "../README.md"
-keywords = ["ui", "gui", "cli", "hot-reload", "lua"]
+keywords = ["ui", "gui", "cli", "hot-reload", "typescript"]
 categories = ["gui", "command-line-utilities", "wasm"]
 
 [[bin]]
@@ -24,7 +24,6 @@ axo-bridge = { path = "../bridge", version = "0.1" }
 axo-platforms = { path = "../platforms", version = "0.1" }
 tokio.workspace = true
 clap = { version = "4", features = ["derive"] }
-mlua.workspace = true
 qrcode = { version = "0.14", optional = true }
 image = { version = "0.25", optional = true }
 local-ip-address = { version = "0.6", optional = true }

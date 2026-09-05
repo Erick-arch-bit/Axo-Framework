@@ -3,15 +3,14 @@ name = "axo-bridge"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "JS/TS ↔ Rust bridge for Axo Framework (QuickJS) — transitional phase (Fase 0)"
+description = "JS/TS ↔ Rust bridge for Axo Framework (QuickJS)"
 repository.workspace = true
 homepage.workspace = true
 readme = "../README.md"
-keywords = ["ui", "gui", "lua", "ffi", "mlua"]
+keywords = ["ui", "gui", "javascript", "typescript"]
 categories = ["gui", "game-engines", "wasm"]
 
 [dependencies]
-mlua.workspace = true
 rquickjs.workspace = true
 notify = "7"
 serde.workspace = true

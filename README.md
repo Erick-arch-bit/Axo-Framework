@@ -2,7 +2,7 @@
 
 **Crea más rápido. Hazlo completo. Extiéndelo todo.**
 
-Axo es un framework UI multiplataforma con motor **Rust** (wgpu) y capa de scripting **Lua**. Ideal para apps internas, dashboards embebidos, terminales POS, y herramientas de nicho.
+Axo es un framework UI multiplataforma con motor **Rust** (wgpu) y capa de scripting **TypeScript/JavaScript** (QuickJS). Ideal para apps internas, dashboards embebidos, terminales POS, y herramientas de nicho.
 
 ## Stack
 
@@ -10,7 +10,7 @@ Axo es un framework UI multiplataforma con motor **Rust** (wgpu) y capa de scrip
 |------|-----------|
 | Renderizado | wgpu (Vulkan/Metal/DX12/WebGL2) |
 | Layout | Taffy (Flexbox/CSS Grid) |
-| Scripting | Lua 5.4 via mlua |
+| Scripting | TypeScript/JavaScript via QuickJS (rquickjs) |
 | Hot Reload | File watcher (notify) |
 | Texto | ab_glyph (outline rendering) |
 | Objetivos | Linux, macOS, Windows, Android, iOS, Web |
@@ -34,73 +34,66 @@ axo-cli build --mode release
 
 ## Conceptos
 
-### UI desde Lua
+### UI desde TypeScript
 
-```lua
-local UI = require("axo")
-
-function App()
+```ts
+function App() {
     return UI.View({
-        style = {
-            width = "100%",
-            height = "100%",
-            backgroundColor = "#1a1a2e",
-            flexDirection = "column",
-            justifyContent = "center",
-            alignItems = "center",
+        style: {
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#1a1a2e",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
         },
-        children = {
+        children: [
             UI.Text("Hola Axo!", {
-                fontSize = 24,
-                color = "#ffffff",
+                fontSize: 24,
+                color: "#ffffff",
             }),
             UI.Button({
-                text = "Click",
-                onClick = "handleClick",
-                style = {
-                    backgroundColor = "#e94560",
-                    width = 200,
-                    height = 50,
-                    margin = 10,
+                text: "Click",
+                onClick: () => console.log("Boton presionado!"),
+                style: {
+                    backgroundColor: "#e94560",
+                    width: 200,
+                    height: 50,
+                    margin: 10,
                 },
             }),
-        },
-    })
-end
+        ],
+    });
+}
 
-function handleClick()
-    log("Boton presionado!")
-end
-
-return App
+App;
 ```
 
-### onClick — Nombres de función global
+### onClick — Funciones JS invocables
 
-`onClick` recibe un **string** con el nombre de una función Lua global. Cuando el usuario hace clic, Axo busca y ejecuta esa función.
+`onClick` recibe una **función JavaScript**. Axo la guarda y la ejecuta desde Rust cuando el usuario hace clic.
 
-```lua
--- Function reference (almacenada automáticamente)
-UI.Button({ onClick = function() print("click") end })
+```ts
+UI.Button({ text: "Click", onClick: () => console.log("click!") })
 
--- Global function name
-UI.Button({ onClick = "handleClick" })
+// También se acepta un id de callback registrado como string
+UI.Button({ text: "Click", onClick: "cb_1" })
 ```
 
 ### Device API
 
-Acceso a hardware del dispositivo desde Lua:
+Acceso a hardware del dispositivo desde TypeScript:
 
-```lua
-local info = Device.info()
-print(info.os_name, info.screen_width)
+```ts
+const info = Device.info();
+console.log(info.os_name, info.screen_width);
 
-Device.requestPermission("camera")
-Device.getLocation()
-Device.showNotification("Titulo", "Mensaje")
+Device.requestPermission("camera");
+Device.getLocation();
+Device.showNotification("Titulo", "Mensaje");
 
-local data = Device.readFile("data.txt")
-Device.writeFile("data.txt", "contenido")
+const data = Device.readFile("data.txt");
+Device.writeFile("data.txt", "contenido");
 ```
 
 | Función | Descripción |
@@ -135,8 +128,8 @@ axo-cli release          # Build + bundle
 ```
 my-app/
 ├── app/
-│   ├── app.lua              # Entry point (debe retornar App())
-│   │   └── axo/init.lua      # Std library (View, Text, Button, etc.)
+│   ├── app.ts               # Entry point (debe evaluar a App())
+│   │   └── axo/             # Stdlib JS (UI, useState, Device)
 └── README.md
 ```
 
@@ -144,15 +137,15 @@ my-app/
 
 ```
 ┌─────────────────┐     ┌──────────────────┐
-│   Lua App       │     │   Rust Core      │
-│   app.lua       │◄───►│   wgpu + Taffy   │
-│   init.lua      │     │   + ab_glyph     │
+│   TS/JS App     │     │   Rust Core      │
+│   app.ts        │◄───►│   wgpu + Taffy   │
+│   (QuickJS)     │     │   + ab_glyph     │
 └────────┬────────┘     └────────┬─────────┘
-         │                       │
-         ▼                       ▼
-   Device API              Hot Reload
-   (permisos,              (file watcher)
-    GPS, storage)
+          │                       │
+          ▼                       ▼
+    Device API              Hot Reload
+    (permisos,              (file watcher)
+     GPS, storage)
 ```
 
 ## Licencia

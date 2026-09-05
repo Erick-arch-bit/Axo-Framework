@@ -1,7 +1,7 @@
 # ADR-006: Migración de Lua a motor JavaScript (QuickJS)
 
 ## Estado
-En progreso — Fase 4 completada (Device API JS + onClick invocable)
+Aceptado — Migración completada (Fase 5)
 
 ## Fecha
 2026-09-04
@@ -43,7 +43,13 @@ Adoptar **QuickJS** mediante el crate `rquickjs` como nuevo motor de scripting.
 - [x] Fase 2 — Stdlib JavaScript
 - [x] Fase 3 — TypeScript + hot-reload mínimo
 - [x] Fase 4 — Device API + eventos reales
-- [ ] Fase 5 — Limpieza de Lua
+- [x] Fase 5 — Limpieza de Lua + CLI/docs TS
+
+## Resultado
+Stack definitivo: **TypeScript/JavaScript (QuickJS via `rquickjs`) ↔ Rust Core (wgpu + Taffy)**.
+`mlua` eliminado del workspace; `axo-cli init/dev` trabajan con `app/app.ts` (`app/app.js`
+como alternativa); `onClick` se invoca desde Rust y `Device` existe de forma estable.
+El website de marketing conserva textos históricos de Lua (reescritura fuera de alcance).
 
 ## Nota Fase 4 — Device API JS + onClick invocable
 - `globalThis.Device` (registrado en Rust en `bridge/src/js_device.rs`, sin tocar el path Lua):

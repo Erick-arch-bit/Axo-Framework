@@ -17,7 +17,6 @@ homepage = "https://github.com/Erick-arch-bit/Axo-Framework"
 readme = "README.md"
 
 [workspace.dependencies]
-mlua = { version = "0.10", features = ["lua54", "send"] }
 wgpu = "22"
 winit = "0.30"
 taffy = "0.5"

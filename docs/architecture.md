@@ -4,13 +4,13 @@
 
 ```mermaid
 graph TD
-    subgraph "App Layer (Lua)"
-        LU["app/*.lua\n(User Code)"]
-        LF["app/axo/*.lua\n(Std Library)"]
+    subgraph "App Layer (TypeScript)"
+        LU["app/*.ts\n(User Code)"]
+        LF["app/axo/*.js|ts\n(Std Library)"]
     end
 
-    subgraph "Bridge Layer (Rust + mlua)"
-        BR["bridge/\nmlua FFI\nAPI pública\nSerialización\nDiffing"]
+    subgraph "Bridge Layer (Rust + QuickJS)"
+        BR["bridge/\nrquickjs runtime\nAPI pública\nSerialización\nDevice API"]
     end
 
     subgraph "Core Engine (Rust)"
@@ -18,7 +18,7 @@ graph TD
         LA["core/layout/\nTaffy\nFlexbox/CSS Grid"]
         WI["core/window/\nWinit\nEvent loop"]
         TX["core/text/\nglyphon\nText shaping"]
-        HR["core/hot_reload/\nFile watcher\nWS Server\nLua runtime"]
+        HR["core/hot_reload/\nFile watcher\nWS Server\nJS runtime"]
     end
 
     subgraph "Platform Layer (Rust + native)"
@@ -47,16 +47,16 @@ graph TD
 
 ## Capas
 
-### App Layer (Lua)
+### App Layer (TypeScript)
 Código del desarrollador. UI declarativa, estado, lógica de negocio.
-- `app/*.lua` — entrada de la aplicación
-- `app/axo/*.lua` — librería estándar de componentes (View, Text, Button, etc.)
+- `app/*.ts` — entrada de la aplicación (transpilada con esbuild, evaluada en QuickJS)
+- `app/axo/*.js|ts` — librería estándar de componentes (View, Text, Button, etc.)
 
 ### Bridge Layer (Rust)
-Comunicación Lua ↔ Rust via mlua.
-- `api.rs` — funciones expuestas a Lua
-- `serde.rs` — serialización del árbol UI
-- `diff.rs` — diffing de virtual DOM para eficiencia
+Comunicación TS/JS ↔ Rust via QuickJS (rquickjs).
+- `js_serde.rs` — serialización del árbol UI a `UiNode`
+- `js_device.rs` — Device API expuesta al contexto JS
+- `callbacks.rs` — invocación de `onClick` desde Rust
 
 ### Core Engine (Rust)
 Motor de renderizado, layout y eventos.

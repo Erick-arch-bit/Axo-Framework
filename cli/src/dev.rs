@@ -1,16 +1,12 @@
 use std::sync::{Arc, Mutex};
 
 use clap::Args;
-use mlua::prelude::*;
 
 use axo_core::window::{ClickHandler, RebuildFn};
 
-static LUA_VM: std::sync::LazyLock<Mutex<Option<Lua>>> =
-    std::sync::LazyLock::new(|| Mutex::new(None));
-
 #[derive(Args)]
 pub struct DevArgs {
-    #[arg(long, default_value = "app/app.lua")]
+    #[arg(long, default_value = "app/app.ts")]
     pub entry: String,
 
     #[arg(long, default_value_t = 9876)]
@@ -131,80 +127,66 @@ fn render_qr(qr: &qrcode::QrCode) -> String {
     output
 }
 
-fn load_and_build(entry: &str, viewport_w: f32, viewport_h: f32) -> Option<Vec<axo_core::Rect>> {
-    match axo_bridge::create_vm() {
-        Ok(lua) => {
-            let result = build_from_vm(&lua, entry, viewport_w, viewport_h);
-            *LUA_VM.lock().unwrap() = Some(lua);
-            result
+fn resolve_entry(requested: &str) -> Result<String, String> {
+    if std::path::Path::new(requested).exists() {
+        return Ok(requested.to_string());
+    }
+    if requested.ends_with(".lua") {
+        return Err(format!(
+            "Axo ya no usa Lua. Entrypoint no encontrado: {requested} (usa app/app.ts o app/app.js)"
+        ));
+    }
+    for cand in ["app/app.ts", "app/app.js"] {
+        if std::path::Path::new(cand).exists() {
+            return Ok(cand.to_string());
         }
+    }
+    Err(format!(
+        "Entrypoint no encontrado: {requested} (buscado app/app.ts, app/app.js)"
+    ))
+}
+
+fn load_and_build(entry: &str, viewport_w: f32, viewport_h: f32) -> Option<Vec<axo_core::Rect>> {
+    match axo_bridge::load_app_auto(entry) {
+        Ok(root) => Some(build_rects(&root, viewport_w, viewport_h)),
         Err(e) => {
-            eprintln!("[Lua] Failed to create VM: {}", e);
+            eprintln!("  [JS] Failed to load app: {}", e);
             None
         }
     }
 }
 
-fn build_from_vm(lua: &Lua, entry: &str, viewport_w: f32, viewport_h: f32) -> Option<Vec<axo_core::Rect>> {
-    match axo_bridge::load_app(lua, entry) {
-        Ok(root) => {
-            let mut engine = axo_core::layout::Engine::new();
-            let rects = axo_bridge::taffy_conv::build_rects_simple(
-                &mut engine, &root, viewport_w, viewport_h,
-            );
-            println!("  [CLI] Built {} rectangles", rects.len());
-            Some(rects)
-        }
-        Err(e) => {
-            eprintln!("  [Lua] Failed to load app: {}", e);
-            None
-        }
-    }
+fn build_rects(root: &axo_bridge::serde::UiNode, viewport_w: f32, viewport_h: f32) -> Vec<axo_core::Rect> {
+    let mut engine = axo_core::layout::Engine::new();
+    let rects = axo_bridge::taffy_conv::build_rects_simple(
+        &mut engine, root, viewport_w, viewport_h,
+    );
+    println!("  [CLI] Built {} rectangles", rects.len());
+    rects
 }
 
 fn make_click_handler(
     shared_rects: Arc<Mutex<Vec<axo_core::Rect>>>,
     entry: String,
 ) -> ClickHandler {
+    let js_click = axo_bridge::callbacks::click_handler_from_js();
     Arc::new(move |_, cb_id, _, _| {
         if cb_id.is_empty() {
             return;
         }
-        let state = LUA_VM.lock().unwrap();
-        if let Some(ref lua) = *state {
-            if cb_id.starts_with("__axo_cb_") {
-                if let Ok(callbacks) = lua.globals().get::<LuaTable>("_AXO_CALLBACKS") {
-                    if let Ok(func) = callbacks.get::<LuaFunction>(cb_id) {
-                        let _ = func.call::<()>(());
-                    }
-                }
-            } else {
-                if let Ok(func) = lua.globals().get::<LuaFunction>(cb_id) {
-                    let _ = func.call::<()>(());
-                }
-            }
-        }
-        drop(state);
+        js_click(cb_id.to_string());
 
-        let lua_guard = LUA_VM.lock().unwrap();
-        if let Some(ref lua) = *lua_guard {
-            let viewport_w = 1024.0;
-            let viewport_h = 768.0;
-            if let Some(rects) = build_from_vm(lua, &entry, viewport_w, viewport_h) {
-                *shared_rects.lock().unwrap() = rects;
-            }
+        let viewport_w = 1024.0;
+        let viewport_h = 768.0;
+        if let Some(rects) = load_and_build(&entry, viewport_w, viewport_h) {
+            *shared_rects.lock().unwrap() = rects;
         }
     })
 }
 
 fn make_rebuild_fn(entry: String) -> RebuildFn {
     Arc::new(move |viewport_w: f32, viewport_h: f32| -> Vec<axo_core::Rect> {
-        let lua_guard = LUA_VM.lock().unwrap();
-        if let Some(ref lua) = *lua_guard {
-            build_from_vm(lua, &entry, viewport_w, viewport_h).unwrap_or_default()
-        } else {
-            load_and_build(&entry, viewport_w, viewport_h).unwrap_or_default()
-        }
+        load_and_build(&entry, viewport_w, viewport_h).unwrap_or_default()
     })
 }
 
@@ -268,7 +250,13 @@ pub fn run(args: DevArgs) {
     }
 
     let shared_rects = Arc::new(Mutex::new(Vec::new()));
-    let entry = args.entry.clone();
+    let entry = match resolve_entry(&args.entry) {
+        Ok(e) => e,
+        Err(msg) => {
+            eprintln!("  [Dev] {msg}");
+            return;
+        }
+    };
 
     // Initial load
     if let Some(rects) = load_and_build(&entry, 1024.0, 768.0) {
@@ -278,21 +266,17 @@ pub fn run(args: DevArgs) {
     let click_handler = make_click_handler(shared_rects.clone(), entry.clone());
     let rebuild_fn = make_rebuild_fn(entry.clone());
 
-    // Start file watcher for hot reload
+    // Start file watcher for hot reload (JS/TS via bridge)
     if !args.no_watch {
         let entry_watch = entry.clone();
         let shared = shared_rects.clone();
-        let app_dir = std::path::Path::new(&entry)
-            .parent()
-            .map(|p| p.to_string_lossy().to_string())
-            .unwrap_or_else(|| ".".to_string());
-
-        axo_core::hot_reload::watcher::watch(&app_dir, move || {
-            if let Some(rects) = load_and_build(&entry_watch, 1024.0, 768.0) {
-                *shared.lock().unwrap() = rects;
-                println!("  [HotReload] UI updated!");
-            }
-        });
+        if let Err(e) = axo_bridge::watch::watch_and_reload(&entry_watch, move |root| {
+            let rects = build_rects(&root, 1024.0, 768.0);
+            *shared.lock().unwrap() = rects;
+            println!("  [HotReload] UI updated!");
+        }) {
+            eprintln!("  [HotReload] No se pudo iniciar el watcher: {e}");
+        }
     }
 
     // Start key listener thread for [r] restart and [q] quit

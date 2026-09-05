@@ -1,5 +1,3 @@
-pub mod api;
-pub mod device_api;
 pub mod serde;
 pub mod taffy_conv;
 
@@ -345,45 +343,52 @@ pub fn fase4_smoke_test() -> Result<(), Box<dyn std::error::Error>> {
     }))
 }
 
-use std::sync::{Arc, Mutex};
-use mlua::prelude::*;
-use crate::device_api::DeviceBridge;
-use crate::serde::UiNode;
-
-pub fn create_vm() -> LuaResult<Lua> {
-    let lua = Lua::new();
-
-    // Set Lua package path so `require("axo")` finds app/axo/init.lua
-    let globals = lua.globals();
-    let package: LuaTable = globals.get("package")?;
-    let current_path: String = package.get("path")?;
-    let cwd = std::env::current_dir().unwrap_or_default().display().to_string();
-    let axo_path = format!("{}/app/axo/?.lua;{}/app/components/?.lua;{}/app/?/init.lua;{}/app/?.lua;{}",
-        cwd, cwd, cwd, cwd, current_path);
-    package.set("path", axo_path)?;
-
-    let device_bridge = Arc::new(Mutex::new(DeviceBridge::new()));
-
-    // Initialize callback registry for event system
-    {
-        let globals = lua.globals();
-        let callbacks = lua.create_table()?;
-        globals.set("_AXO_CALLBACKS", callbacks)?;
+// Fase 5: batería mínima de humo post-limpieza (sin Lua).
+#[allow(dead_code)]
+pub fn fase5_smoke_test() -> Result<(), Box<dyn std::error::Error>> {
+    // Fase 5: los tres ejemplos TS cargan y devuelven View.
+    for (name, want) in [
+        ("app/examples/ts-hello/app.ts", "Hola desde TypeScript"),
+        ("app/examples/ts-counter/app.ts", "Contador:"),
+        ("app/examples/ts-device-click/app.ts", "OS:"),
+    ] {
+        let candidates = [
+            name.to_string(),
+            format!("../{name}"),
+            format!("{}/../{name}", env!("CARGO_MANIFEST_DIR")),
+        ];
+        let mut loaded = false;
+        for path in &candidates {
+            if std::fs::metadata(path).is_err() {
+                continue;
+            }
+            let root = load_app_auto(path)?;
+            assert_eq!(root.node_type, "View", "Fase 5: {path} no es View");
+            assert!(
+                root.children.iter().any(|c| c.content.contains(want)),
+                "Fase 5: {path} sin contenido '{want}'"
+            );
+            println!("[Fase 5] OK: {path} → View ('{want}')");
+            loaded = true;
+            break;
+        }
+        if !loaded {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                format!("Fase 5: ejemplo no encontrado: {name}"),
+            )
+            .into());
+        }
     }
-
-    api::register_functions(&lua)?;
-    device_api::register_device_api(&lua, device_bridge)?;
-
-    Ok(lua)
-}
-
-pub fn load_app(lua: &Lua, path: &str) -> LuaResult<UiNode> {
-    let code = std::fs::read_to_string(path)
-        .map_err(|e| mlua::Error::RuntimeError(format!("Failed to read {}: {}", path, e)))?;
-
-    let app_fn: LuaFunction = lua.load(&code).eval()?;
-    let ui_tree: LuaTable = app_fn.call(())?;
-    let root = serde::table_to_ui_node(&ui_tree, lua)?;
-
-    Ok(root)
+    // Fase 5: el botón de ts-device-click sigue siendo invocable.
+    let root = load_app_auto("app/examples/ts-device-click/app.ts")
+        .or_else(|_| load_app_auto("../app/examples/ts-device-click/app.ts"))?;
+    let btn = root
+        .children
+        .iter()
+        .find(|c| c.node_type == "Button")
+        .expect("Fase 5: falta Button");
+    assert!(callbacks::invoke_js_callback(&btn.style.on_click_id)?);
+    println!("[Fase 5] OK: invoke on_click_id={}", btn.style.on_click_id);
+    Ok(())
 }
