@@ -3,6 +3,12 @@ pub mod device_api;
 pub mod serde;
 pub mod taffy_conv;
 
+// --- Nuevos módulos para el motor JS (Fase 0 — solo stubs) ---
+pub mod runtime;
+pub mod ui;
+pub mod callbacks;
+pub mod js_serde;
+
 use std::sync::{Arc, Mutex};
 use mlua::prelude::*;
 use crate::device_api::DeviceBridge;

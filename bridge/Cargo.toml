@@ -3,7 +3,7 @@ name = "axo-bridge"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "Lua↔Rust bridge for Axo Framework: serializes Lua UI trees to Rust nodes, registers device APIs and event callbacks"
+description = "JS/TS ↔ Rust bridge for Axo Framework (QuickJS) — transitional phase (Fase 0)"
 repository.workspace = true
 homepage.workspace = true
 readme = "../README.md"
@@ -12,6 +12,7 @@ categories = ["gui", "game-engines", "wasm"]
 
 [dependencies]
 mlua.workspace = true
+rquickjs.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 taffy.workspace = true
