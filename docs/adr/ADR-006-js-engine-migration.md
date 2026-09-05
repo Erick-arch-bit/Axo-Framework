@@ -1,7 +1,7 @@
 # ADR-006: Migración de Lua a motor JavaScript (QuickJS)
 
 ## Estado
-En progreso — Fase 1 completada (Bridge mínimo QuickJS)
+En progreso — Fase 2 completada (Stdlib JavaScript)
 
 ## Fecha
 2026-09-04
@@ -39,8 +39,8 @@ Adoptar **QuickJS** mediante el crate `rquickjs` como nuevo motor de scripting.
 
 ## Progreso
 - [x] Fase 0 — Preparación
-- [x] Fase 1 — Bridge mínimo (create_js_vm + load_js_app + js_to_ui_node)
-- [ ] Fase 2 — Stdlib TypeScript
+- [x] Fase 1 — Bridge mínimo QuickJS
+- [x] Fase 2 — Stdlib JavaScript (UI + useState básico)
 - [ ] Fase 3 — Hot-reload + TypeScript
-- [ ] Fase 4 — Device API + eventos
+- [ ] Fase 4 — Device API + eventos reales
 - [ ] Fase 5 — Limpieza de Lua

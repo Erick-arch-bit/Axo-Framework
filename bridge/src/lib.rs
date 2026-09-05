@@ -40,6 +40,26 @@ pub fn create_js_vm() -> Result<rquickjs::Context, Box<dyn std::error::Error>> {
 ///   }
 ///   App; // o export / return App
 ///   ```
+// Fase 2: lee un archivo de la stdlib JS (state.js, components.js, index.js)
+// resolviendo rutas relativas al working directory.
+fn read_js_stdlib(name: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let candidates = [
+        format!("app/axo/{name}"),
+        format!("../app/axo/{name}"),
+        format!("{}/../app/axo/{name}", env!("CARGO_MANIFEST_DIR")),
+    ];
+    for p in &candidates {
+        if let Ok(code) = std::fs::read_to_string(p) {
+            return Ok(code);
+        }
+    }
+    Err(std::io::Error::new(
+        std::io::ErrorKind::NotFound,
+        format!("Fase 2: stdlib JS no encontrada: app/axo/{name}"),
+    )
+    .into())
+}
+
 pub fn load_js_app(path: &str) -> Result<crate::serde::UiNode, Box<dyn std::error::Error>> {
     // Fase 1: 1. Leer el archivo.
     let code = std::fs::read_to_string(path)?;
@@ -47,6 +67,11 @@ pub fn load_js_app(path: &str) -> Result<crate::serde::UiNode, Box<dyn std::erro
     let ctx = create_js_vm()?;
     // Fase 1: 3-6. Evaluar, invocar si es función y convertir a UiNode (dentro del scope del contexto).
     let node: crate::serde::UiNode = ctx.with(|ctx| -> Result<crate::serde::UiNode, Box<dyn std::error::Error>> {
+        // Fase 2: inyectar la stdlib (state.js, components.js, index.js) antes de la app.
+        for name in ["state.js", "components.js", "index.js"] {
+            let std_code = read_js_stdlib(name)?;
+            let _: rquickjs::Value = ctx.eval(std_code)?;
+        }
         // Fase 1: 3. Evaluar el código.
         let v: rquickjs::Value = ctx.eval(code.clone())?;
         // Fase 1: 4. Si el resultado es función → llamarla.
@@ -90,6 +115,36 @@ pub fn fase1_smoke_test() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
     Err(last_err.unwrap_or_else(|| std::io::Error::new(std::io::ErrorKind::Other, "Fase 1: app.js no encontrado").into()))
+}
+
+// Fase 2: verificación mínima del flujo con stdlib (UI.View/Text/Button + useState + onClick).
+#[allow(dead_code)]
+pub fn fase2_smoke_test() -> Result<(), Box<dyn std::error::Error>> {
+    // Fase 2: ruta relativa al workspace (con fallback según working directory).
+    let candidates = [
+        "app/examples/js-counter/app.js",
+        "../app/examples/js-counter/app.js",
+        concat!(env!("CARGO_MANIFEST_DIR"), "/../app/examples/js-counter/app.js"),
+    ];
+    let mut last_err: Option<Box<dyn std::error::Error>> = None;
+    for path in candidates {
+        match load_js_app(path) {
+            Ok(root) => {
+                assert_eq!(root.node_type, "View");
+                assert!(root.children.iter().any(|c| c.node_type == "Text"));
+                let btn = root.children.iter().find(|c| c.node_type == "Button").expect("Fase 2: falta Button");
+                assert!(!btn.style.on_click_id.is_empty());
+                println!("[Fase 2] OK: {path} → View con {} hijo(s), on_click_id={}", root.children.len(), btn.style.on_click_id);
+                return Ok(());
+            }
+            Err(e) if std::fs::metadata(path).is_err() => {
+                last_err = Some(e);
+                continue;
+            }
+            Err(e) => return Err(e),
+        }
+    }
+    Err(last_err.unwrap_or_else(|| std::io::Error::new(std::io::ErrorKind::Other, "Fase 2: js-counter/app.js no encontrado").into()))
 }
 
 use std::sync::{Arc, Mutex};

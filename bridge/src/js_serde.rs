@@ -173,6 +173,17 @@ pub fn js_to_ui_node<'js>(value: Value<'js>) -> Result<UiNode, std::string::Stri
         }
     }
 
+    // Fase 2: `onClick` (id string generado por la stdlib) → style.on_click_id.
+    if let Some(v) = get_prop(&obj, "onClick") {
+        if !v.is_undefined() && !v.is_null() {
+            if let Some(s) = js_string(&v) {
+                if !s.is_empty() {
+                    style.on_click_id = s;
+                }
+            }
+        }
+    }
+
     // Fase 1: `children` opcional, array recursivo, default vec![].
     let mut children = Vec::new();
     if let Ok(Some(arr)) = obj.get::<_, Option<Array>>("children") {
