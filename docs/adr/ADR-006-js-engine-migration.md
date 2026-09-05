@@ -1,7 +1,7 @@
 # ADR-006: Migración de Lua a motor JavaScript (QuickJS)
 
 ## Estado
-En progreso — Fase 3 completada (TypeScript + hot-reload mínimo)
+En progreso — Fase 4 completada (Device API JS + onClick invocable)
 
 ## Fecha
 2026-09-04
@@ -42,8 +42,24 @@ Adoptar **QuickJS** mediante el crate `rquickjs` como nuevo motor de scripting.
 - [x] Fase 1 — Bridge mínimo QuickJS
 - [x] Fase 2 — Stdlib JavaScript
 - [x] Fase 3 — TypeScript + hot-reload mínimo
-- [ ] Fase 4 — Device API + eventos reales
+- [x] Fase 4 — Device API + eventos reales
 - [ ] Fase 5 — Limpieza de Lua
+
+## Nota Fase 4 — Device API JS + onClick invocable
+- `globalThis.Device` (registrado en Rust en `bridge/src/js_device.rs`, sin tocar el path Lua):
+  reales (reutilizan `axo_core` vía `DeviceBridge::new`): `info`, `checkPermission`,
+  `requestPermission`, `getLocation` ({ lat, lng, accuracy }), `getSensors`,
+  `readFile` (lanza error JS controlado si falla), `writeFile` → boolean, `deleteFile` → boolean;
+  stubs seguros: `showNotification` (log + true), `takePhoto` (null + log `[JS Device] not available`).
+- Runtime retenido (`bridge/src/app_runtime.rs`): un `rquickjs::Context` compartido
+  (`OnceLock<Mutex<Option<..>>>`) entre `load_js_app`/`load_app_auto` e `invoke_js_callback`;
+  no soporta múltiples apps concurrentes. `reset_js_app_runtime()` lo descarta
+  (el hot-reload lo llama antes de recargar: los ids de callbacks anteriores se invalidan).
+- Clicks (`bridge/src/callbacks.rs`): `invoke_js_callback(id)` → `Ok(true)` si la función
+  de `globalThis.__AXO_CALLBACKS[id]` se llamó, `Ok(false)` si no existe;
+  `handle_click(id)` → `Ok(())`/`Err` legible; `click_handler_from_js()` → `Fn(String)`
+  listo para el core/CLI (errores logueados). Llamadas sin argumentos (Fase 4).
+  El CLI (`axo dev`) sigue en el path Lua: integración total queda para Fase 5.
 
 ## Nota Fase 3 — Estrategia de transpile (Opción B)
 Se eligió la **Opción B**: `transpile_ts_to_js` invoca `npx --yes esbuild --loader=ts --format=esm --target=es2020`

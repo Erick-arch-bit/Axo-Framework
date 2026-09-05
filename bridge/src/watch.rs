@@ -81,6 +81,8 @@ pub fn watch_and_reload(
                     }
                     *guard = Instant::now();
                 }
+                // Fase 4: recrear el runtime retenido (los ids de callbacks anteriores se invalidan).
+                crate::app_runtime::reset_js_app_runtime();
                 match crate::load_app_auto(&entry_str) {
                     Ok(node) => on_reload(node),
                     Err(e) => eprintln!("[HotReload] Fase 3: error recargando {entry_str}: {e}"),
