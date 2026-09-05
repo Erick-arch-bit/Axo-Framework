@@ -4,6 +4,8 @@
 
 Axo es un framework UI multiplataforma con motor **Rust** (wgpu) y capa de scripting **TypeScript/JavaScript** (QuickJS). Ideal para apps internas, dashboards embebidos, terminales POS, y herramientas de nicho.
 
+> Migración desde Lua → ver `docs/adr/ADR-006-js-engine-migration.md`.
+
 ## Stack
 
 | Capa | Tecnología |

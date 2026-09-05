@@ -19,9 +19,9 @@ name = "axo-cli"
 path = "src/main.rs"
 
 [dependencies]
-axo-core = { path = "../core", version = "0.1" }
-axo-bridge = { path = "../bridge", version = "0.1" }
-axo-platforms = { path = "../platforms", version = "0.1" }
+axo-core = { path = "../core", version = "0.2" }
+axo-bridge = { path = "../bridge", version = "0.2" }
+axo-platforms = { path = "../platforms", version = "0.2" }
 tokio.workspace = true
 clap = { version = "4", features = ["derive"] }
 qrcode = { version = "0.14", optional = true }

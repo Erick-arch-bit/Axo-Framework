@@ -11,8 +11,8 @@ keywords = ["ui", "gui", "cross-platform", "android", "wasm"]
 categories = ["gui", "game-engines", "wasm"]
 
 [dependencies]
-axo-core = { path = "../core", version = "0.1" }
-axo-bridge = { path = "../bridge", version = "0.1" }
+axo-core = { path = "../core", version = "0.2" }
+axo-bridge = { path = "../bridge", version = "0.2" }
 wgpu.workspace = true
 winit.workspace = true
 
