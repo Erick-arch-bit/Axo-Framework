@@ -13,6 +13,7 @@ categories = ["gui", "game-engines", "wasm"]
 [dependencies]
 mlua.workspace = true
 rquickjs.workspace = true
+notify = "7"
 serde.workspace = true
 serde_json.workspace = true
 taffy.workspace = true

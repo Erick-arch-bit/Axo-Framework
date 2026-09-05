@@ -259,6 +259,7 @@ version = "0.1.4"
 dependencies = [
  "axo-core",
  "mlua",
+ "notify",
  "rquickjs",
  "serde",
  "serde_json",
